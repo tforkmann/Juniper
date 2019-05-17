@@ -1,0 +1,15 @@
+group Juniper
+    EPPlus
+    FSharp.Data
+    FSharp.Compiler.Tools
+    SqlProvider
+    Expecto
+    Expecto.BenchmarkDotNet
+    Expecto.FsCheck
+    Expecto.TestResults
+    System.Data.SqlClient
+    WindowsAzure.Storage
+    Taskbuilder.fs
+    Microsoft.ApplicationInsights
+    Microsoft.ApplicationInsights.DependencyCollector
+    Microsoft.ApplicationInsights.PerfCounterCollector    

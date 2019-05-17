@@ -1,0 +1,35 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <OutputType>Library</OutputType>
+    <TargetFramework>netcoreapp2.2</TargetFramework>
+    <AzureFunctionsVersion>v2</AzureFunctionsVersion>
+  </PropertyGroup>
+  <ItemGroup>
+    <ProjectReference Include="../../Juniper/Juniper.fsproj">
+      <Name>Juniper.fsproj</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="../../Shared/Domain.fs" />
+    <Compile Include="../../Shared/FileWriter.fs" />
+    <Compile Include="../../Shared/TableNames.fs" />
+    <Compile Include="../../Shared/CreateTable.fs" />
+    <Compile Include="../../Shared/BlobNames.fs" />
+    <Compile Include="../../Shared/CreateBlob.fs" />
+    <Compile Include="../../Shared/SharedUtils.fs" />
+    <Compile Include="../../Shared/TableStorage.fs" />
+    <Compile Include="../../Shared/TableMappers.fs" />
+    <Compile Include="../../Shared/GetTableEntry.fs" />
+    <Compile Include="../../Shared/CloudTable.fs" />
+    <Compile Include="../../Shared/PostToQueue.fs" />
+    <Compile Include="../../Shared/TriggerNames.fs" />
+    <Compile Include="ExpectoTestSuite.fs" />
+    <Compile Include="ExpectoReporting.fs" />
+    <Compile Include="EscalationLvlLow.fs" />
+    <Compile Include="EscalationLvlHigh.fs" />
+    <Compile Include="JuniperReports.fs" />
+    <Content Include="function.json" />
+    <None Include="paket.references" />
+  </ItemGroup>
+  <Import Project="..\..\..\.paket\Paket.Restore.targets" />
+</Project>

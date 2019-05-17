@@ -1,0 +1,46 @@
+
+group Juniper
+    source https://api.nuget.org/v3/index.json
+    nuget FSharp.Core
+    nuget EPPlus
+    nuget SqlProvider
+    nuget FSharp.Data
+    nuget Expecto
+    nuget Expecto.BenchmarkDotNet
+    nuget Expecto.FsCheck
+    nuget Expecto.TestResults
+    nuget FSharp.Compiler.Tools
+    nuget WindowsAzure.Storage
+    nuget Taskbuilder.fs
+    nuget Microsoft.ApplicationInsights
+    nuget Microsoft.ApplicationInsights.DependencyCollector
+    nuget Microsoft.ApplicationInsights.PerfCounterCollector    
+    nuget System.Configuration.ConfigurationManager
+
+group AzureFunctions
+    
+    source https://api.nuget.org/v3/index.json
+    storage:none
+
+    nuget FSharp.Core
+    nuget Microsoft.NET.Sdk.Functions
+    nuget Microsoft.AspNetCore.Mvc.Core
+    nuget WindowsAzure.Storage
+    nuget Taskbuilder.fs
+    nuget Microsoft.Azure.WebJobs
+    nuget Microsoft.Azure.WebJobs.Extensions
+    nuget Microsoft.Azure.WebJobs.Extensions.Storage
+    nuget Microsoft.ApplicationInsights
+    nuget Microsoft.ApplicationInsights.DependencyCollector 
+    nuget Microsoft.ApplicationInsights.PerfCounterCollector   
+    nuget Newtonsoft.Json
+    nuget Epplus
+    nuget FParsec
+    nuget FSharp.Data
+    nuget Expecto
+    nuget Expecto.BenchmarkDotNet
+    nuget Expecto.FsCheck
+    nuget Expecto.TestResults
+    nuget DurableFunctions.FSharp
+    nuget System.Configuration.ConfigurationManager
+

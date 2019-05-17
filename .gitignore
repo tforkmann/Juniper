@@ -1,0 +1,10 @@
+packages/
+paket-files/
+bin
+logs/*
+obj/
+tools/*
+test/obj/
+.vs/*
+.ionide/
+.fake/*

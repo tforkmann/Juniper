@@ -1,0 +1,36 @@
+{
+    "version": "2.0",
+    "aggregator": {
+        "batchSize": 1000,
+        "flushTimeout": "00:00:30"
+    },
+    "functionTimeout": "00:05:00",
+    "healthMonitor": {
+        "enabled": true,
+        "healthCheckInterval": "00:00:10",
+        "healthCheckWindow": "00:02:00",
+        "healthCheckThreshold": 6,
+        "counterThreshold": 0.80
+    },
+    "logging": {
+      "categoryFilter": {
+          "defaultLevel": "Information",
+          "categoryLevels": {
+              "Host": "Error",
+              "Function": "Error",
+              "Host.Aggregator": "Information"
+          }
+       },
+        "applicationInsights": {
+            "sampling": {
+              "isEnabled": true,
+              "maxTelemetryItemsPerSecond" : 10
+            }
+        }
+    },
+    "tracing": {
+      "consoleLevel": "verbose",
+      "fileLoggingMode": "debugOnly"
+    },
+    "watchDirectories": [ "Shared", "Test" ]
+  }
