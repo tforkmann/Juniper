@@ -3,6 +3,7 @@ module TableStorage
 open System
 open Microsoft.WindowsAzure.Storage.Table
 open Domain
+open Domain.Logging
 open FSharp.Control.Tasks.ContextInsensitive
 open Microsoft.Extensions.Logging
 open FileWriter
@@ -31,13 +32,12 @@ let saveWeatherBatch (table:CloudTable) (messages:HeatPrognose.WeatherData [] ) 
     with
         | exn ->    printfn  "Couldn't Add Entity Message: %s" exn.Message   
                     failwithf  "Couldn't Add Entity Message: %s" exn.Message   
-    let _ =
-        try 
-            table.ExecuteBatchAsync(batchOperation) |> ignore
-        with
-            | exn ->    
-                let msg = sprintf  "Couldn't Add Entity Message: %s" exn.Message   
-                logError exn Local msg
-                failwith msg
+    try 
+        table.ExecuteBatchAsync(batchOperation) |> ignore
+    with
+        | exn ->    
+            let msg = sprintf  "Couldn't Add Entity Message: %s" exn.Message   
+            logError exn Local msg
+            failwith msg
     ()
 }

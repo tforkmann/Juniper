@@ -2,6 +2,7 @@ module TableMappers
 
 open Microsoft.WindowsAzure.Storage.Table
 open Domain
+open HeatPrognose
 open CreateTable
 
 let mapLocation (entity : DynamicTableEntity) : Location =

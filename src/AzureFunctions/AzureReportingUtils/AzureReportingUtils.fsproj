@@ -21,8 +21,8 @@
     <Compile Include="../../Shared/TableMappers.fs" />
     <Compile Include="../../Shared/GetTableEntry.fs" />
     <Compile Include="../../Shared/CloudTable.fs" />
-    <Compile Include="../../Shared/PostToQueue.fs" />
     <Compile Include="../../Shared/TriggerNames.fs" />
+    <Compile Include="../../Shared/PostToQueue.fs" />
     <Compile Include="ExpectoTestSuite.fs" />
     <Compile Include="ExpectoReporting.fs" />
     <Compile Include="EscalationLvlLow.fs" />

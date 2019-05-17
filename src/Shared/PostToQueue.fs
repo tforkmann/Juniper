@@ -7,6 +7,7 @@ open CreateTable
 open TriggerNames
 open FileWriter
 open Domain
+open Domain.Logging
 type AzureConnection = 
     | AzureConnection of string
     member this.Connect() =
@@ -52,9 +53,3 @@ let postToQueue (queue:CloudQueue) msg = task {
 let validationQueue = getQueue connected Validation  
 let sendQueue = getQueue connected SendMail
 let expandQueue = getQueue connected Expand
-let expandAggregationQueue = getQueue connected ExpandAggregation
-let createVirtualReadingQueueFanOut = getQueue connected CreateVirtualReadingFanOut
-let reloadVirtualReadingQueueFanOut = getQueue connected ReloadVirtualReadingFanOut
-let createVirtualReadingQueue = getQueue connected CreateVirtualReading
-let createCalcCompensationQueueSecFanOut = getQueue connected CalcCompensationSecFanOut
-let createCalcCompensationQueueFanOut = getQueue connected CalcCompensationFanOut
