@@ -9,7 +9,6 @@ nuget Fake.DotNet.Cli
 nuget Fake.Core.Environment
 nuget Fake.Installer.Wix
 nuget Newtonsoft.Json
-nuget System.ServiceProcess.ServiceController 
 nuget Fake.Core.Trace
 nuget Fake.IO.Zip
 nuget Fake.Tools.Git
@@ -17,9 +16,7 @@ nuget Fake.DotNet.Testing.Expecto
 //"
 
 #load ".fake/build.fsx/intellisense.fsx"
-#if !FAKE
-  #r "netstandard"
-#endif 
+
 open System
 open System.IO
 open Fake.Core
@@ -28,30 +25,18 @@ open Fake.IO
 open Fake.Tools
 open Fake.Core.TargetOperators
 open Fake.IO.Globbing.Operators
-open Microsoft.Azure.Management.ResourceManager.Fluent.Core
 open Fake.DotNet.Testing
 
 //-----------------------------------------------
 // Information about the project to be used at NuGet and in AssemblyInfo files
 // --------------------------------------------------------------------------------------
 
-let project = "OctoBus"
-let authors = ["Tim Forkmann";"Alexander But"]
+let project = "Juniper"
+let authors = ["Tim Forkmann"]
 let configuration = "Release"
-
-let servicePath = Path.getFullName "./src/AzureUpload"  
-
-let serverPath = Path.getFullName "./src/Server"
-let clientPath = Path.getFullName "./src/Client"
 let deployDir = Path.getFullName "./deploy"
-let clientDeployPath = Path.combine clientPath "deploy"
 let release = ReleaseNotes.load "RELEASE_NOTES.md"
-let serverTestsPath = Path.getFullName "./test/ServerTests"
-let clientTestsPath = Path.getFullName "./test/UITests"
-let clientTestExecutables = "test/UITests/**/bin/**/*Tests*.exe"
-
 let buildDir = "./bin/"
-
 
 // --------------------------------------------------------------------------------------
 // PlatformTools
@@ -124,7 +109,7 @@ let runFunc cmd args workingDir  =
     |> ignore
 let getFunctionApp projectName =
     match projectName with 
-    | "AzurereportingUtils.fsproj" -> "azurereportingutils"   
+    | "AzureReportingUtils.fsproj" -> "azurereportingutils"   
     | _ ->
         "unmatched"
 
@@ -137,6 +122,7 @@ Target.create "PublishAzureFunctions" (fun _ ->
     let funcTool = platformTool "npm" "func.cmd"
     let deployDir = deployDir + "/functions"
     Shell.cleanDir deployDir
+    Trace.tracefn "Loop of FunctionApps"
 
     for functionApp in functionApps do
         Trace.tracefn "FunctionAppName %s" functionApp
@@ -200,3 +186,5 @@ Target.create "PublishAzureFunctions" (fun _ ->
 
         runFunc funcTool ("azure functionapp publish " + functionApp) deployDir
 )
+
+Target.runOrDefault "Build"
