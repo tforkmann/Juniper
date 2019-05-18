@@ -1,7 +1,9 @@
 module TriggerNames
 
 [<Literal>]
-let SendMail = "sendmail-queue"
+let EscalationLvlLow = "escalation-lvl-low"
+[<Literal>]
+let EscalationLvlHigh = "escalation-lvl-high"
 [<Literal>]
 let Validation = "validation-queue"
 [<Literal>]

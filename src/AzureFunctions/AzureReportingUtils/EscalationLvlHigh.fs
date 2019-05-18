@@ -2,7 +2,7 @@ module EscalationLvlHigh
 
 open Microsoft.Azure.WebJobs
 open Newtonsoft.Json
-open Domain
+open Juniper.Escalation
 open System.Net.Mail
 open CreateBlob
 open FSharp.Control.Tasks.ContextInsensitive
@@ -11,11 +11,11 @@ open System.Net.Mime
 open Microsoft.Extensions.Logging
 open TriggerNames
 
-let server = "mail.danpower-gruppe.de"
-let user = "datacheck@azuredanpower.de"
-[<FunctionName("SendEmail")>]
+let server = "mail.addresse.something"
+let user = "escalation@domain.something"
+[<FunctionName("EscalationLvlHigh")>]
 
-let Run([<QueueTrigger(SendMail)>] content:string, log:ILogger) =
+let Run([<QueueTrigger(EscalationLvlHigh)>] content:string, log:ILogger) =
     task {
         let mail = JsonConvert.DeserializeObject<MailContent>(content)
         // log.LogInformation(sprintf "Got message {0}", mail.Text)

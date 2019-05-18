@@ -1,16 +1,15 @@
 module TableMappers
 
 open Microsoft.WindowsAzure.Storage.Table
-open Domain
-open HeatPrognose
-open CreateTable
-
+open Juniper.CreateTable
+open Juniper.Ids
+open Juniper.HeatPrognose
 let mapLocation (entity : DynamicTableEntity) : Location =
-    { LocationId = entity.PartitionKey
+    { LocationId = LocationId (entity.PartitionKey |> int)
       Name = entity.RowKey
-      PostalCode = getIntProperty "PostalCode" entity }
+      PostalCode = getOptionalStringProperty "PostalCode" entity }
 let mapWeatherData (entity : DynamicTableEntity) : WeatherData =
-    { LocationId = entity.PartitionKey
+    { LocationId = LocationId (entity.PartitionKey |> int)
       Time = entity.RowKey
       WindSpeed = getDoubleProperty "WindSpeed" entity
       Humidity = getDoubleProperty "Humidity" entity

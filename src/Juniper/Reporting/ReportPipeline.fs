@@ -1,17 +1,22 @@
 namespace Juniper
 
 open FSharp.Control.Tasks.ContextInsensitive
-open Domain
-open Domain.Logging
+open Juniper.Logging
 open ExcelUtils
 open FileWriter
 open OfficeOpenXml
 open System.IO
 open Expecto
 
+
+
 [<AutoOpen>]
 module ReportPipeline =
 
+    let initSheet (sheet : SheetInsert option) =
+        task {
+            ()
+        }
 
     ///Function to start an ExcelApplication
     let startExcelApp() =
@@ -32,7 +37,7 @@ module ReportPipeline =
 
     let zero =
         printfn "Zero"
-        { WorkSheet = ReportSheet.testSheet
+        { WorkSheet = initSheet
           Name = ""
           LogMsg = ""
           BuildMsg = ""

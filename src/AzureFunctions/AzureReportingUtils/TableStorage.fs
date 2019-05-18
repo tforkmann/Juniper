@@ -1,17 +1,15 @@
 module TableStorage
 
-open System
 open Microsoft.WindowsAzure.Storage.Table
-open Domain
-open Domain.Logging
+open Juniper
+open Juniper.Logging
 open FSharp.Control.Tasks.ContextInsensitive
-open Microsoft.Extensions.Logging
 open FileWriter
 open CreateTable
 
 //MasterData
 let weatherDataEntity (message:HeatPrognose.WeatherData) = 
-    DynamicTableEntity(message.LocationId,message.Time)
+    DynamicTableEntity(message.LocationId.GetValueAsString,message.Time)
     |> setDoubleProperty "Humidity" message.Humidity
     |> setDoubleProperty "Temperature" message.Temperature
     |> setDoubleProperty "Visibility" message.Visibility

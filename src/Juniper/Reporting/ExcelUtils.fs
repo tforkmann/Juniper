@@ -1,6 +1,5 @@
-module ExcelUtils
+namespace Juniper
 open System
-open Domain
 open OfficeOpenXml
 open System.IO
 open CreateBlob
@@ -22,7 +21,7 @@ module ExcelUtils =
         }
 
     ///ReportHeader
-    let reportHeader (reportName : string) (measures : Measure []) (wks : ExcelWorksheet) =
+    let reportHeader (reportName : string) (measures : HeatPrognose.Measure []) (wks : ExcelWorksheet) =
         let timeFrom =
             if measures <> [||] then
                 measures

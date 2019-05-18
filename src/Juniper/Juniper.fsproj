@@ -1,20 +1,20 @@
-﻿<Project Sdk="Microsoft.NET.Sdk">
-
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
     <OutputType>Exe</OutputType>
     <TargetFramework>netcoreapp2.2</TargetFramework>
   </PropertyGroup>
-
   <ItemGroup>
-    <Compile Include="../Shared/Domain.fs" />
-    <Compile Include="../Shared/Config.fs" />
-    <Compile Include="../Shared/FileWriter.fs" />
-    <Compile Include="../Shared/BlobNames.fs" />
-    <Compile Include="../Shared/CreateBlob.fs" />
-    <Compile Include="ExcelUtils.fs" />
-    <Compile Include="ReportSheet.fs" />
-    <Compile Include="Juniper.fs" />
+    <Compile Include="Domain.fs" />
+    <Compile Include="Config.fs" />
+    <Compile Include="Logging/FileWriter.fs" />
+    <Compile Include="Blobs/BlobNames.fs" />
+    <Compile Include="Blobs/CreateBlob.fs" />
+    <Compile Include="Tables/CreateTable.fs" />
+    <Compile Include="Tables/TableNames.fs" />
+    <Compile Include="Tables/CloudTable.fs" />
+    <Compile Include="Reporting/ExcelUtils.fs" />
+    <Compile Include="Reporting/ReportPipeline.fs" />
   </ItemGroup>
   <Import Project="..\..\.paket\Paket.Restore.targets" />
-
 </Project>
