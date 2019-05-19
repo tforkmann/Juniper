@@ -47,11 +47,6 @@ module HeatPrognose =
 [<AutoOpen>]
 module ReportPipeLine =
 
-    type BatchIntervall =
-        | PerMinute
-        | Hourly
-        | Dayly
-
     type ReportIntervall =
         | Dayly
         | Weekly

@@ -18,8 +18,7 @@ let user = "escalation@domain.something"
 let Run([<QueueTrigger(EscalationLvlHigh)>] content:string, log:ILogger) =
     task {
         let mail = JsonConvert.DeserializeObject<MailContent>(content)
-        // log.LogInformation(sprintf "Got message {0}", mail.Text)
-        let from = MailAddress(user,"DataCheck")
+        let from = MailAddress(user,"EscalationLvlHigh")
         let tos = MailAddress(mail.RecipientEMail,mail.Recipient)
 
         
@@ -39,17 +38,12 @@ let Run([<QueueTrigger(EscalationLvlHigh)>] content:string, log:ILogger) =
             
             use stream = new MemoryStream()
             do! blockBlob.DownloadToStreamAsync(stream)
-            let buffer = stream.GetBuffer()
-            // log.LogInformation(sprintf "Downloaded blob {0}/{1} with {2} bytes", containerRef, blobID, buffer.Length)
-            
+            let buffer = stream.GetBuffer()            
             let attachmentStream = new MemoryStream(buffer)
             attachmentStream.Position <- int64 0
-            let contentType = new ContentType("application/vnd.openxmlformats-officedocument.spreadsheetml.sheet")
+            let contentType = ContentType("application/vnd.openxmlformats-officedocument.spreadsheetml.sheet")
             let data = new Attachment(attachmentStream, name)
             data.ContentType <- contentType
             message.Attachments.Add(data)
-        
-        // smtpclient.UseDefaultCredentials <- true
-        // smtpclient.Credentials <- NetworkCredential(user, pw)
         smtpclient.Send(message)
     }

@@ -16,7 +16,6 @@
     <Compile Include="Queues/TriggerNames.fs" />
     <Compile Include="Queues/PostToQueue.fs" />
     <Compile Include="ExpectoTestSuite.fs" />
-    <Compile Include="ExpectoReporting.fs" />
     <Compile Include="EscalationLvlLow.fs" />
     <Compile Include="EscalationLvlHigh.fs" />
     <Compile Include="ReportSheet.fs" />
