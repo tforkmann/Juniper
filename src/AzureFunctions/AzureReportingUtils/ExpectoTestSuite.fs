@@ -12,7 +12,7 @@ open Microsoft.WindowsAzure.Storage.Queue
 [<FunctionName("ExpectoTestSuite")>]
 let Run([<TimerTrigger("0 0 0 1 * *")>] myTimer : TimerInfo, log : ILogger) =
     task {
-        let! weatherData  = getWeatherData weather
+        let! weatherData = getWeatherData weather
         let testList =
             testList "Test WeatherData"
                [ for weather in weatherData -> 
@@ -27,6 +27,13 @@ let Run([<TimerTrigger("0 0 0 1 * *")>] myTimer : TimerInfo, log : ILogger) =
         | 1 ->
             let msg = CloudQueueMessage(Newtonsoft.Json.JsonConvert.SerializeObject(weatherData))
             do! juniperReportsQueue.AddMessageAsync msg   
-        | _ -> ()
-
+        | _ -> 
+            let dataSetIsFaulty = weatherData |> Array.forall (fun x -> x.IsFaulty)
+            match dataSetIsFaulty with
+            | false -> 
+                let msg = CloudQueueMessage(Newtonsoft.Json.JsonConvert.SerializeObject(weatherData))
+                do! ecalationLvlLowQueue.AddMessageAsync msg   
+            | true ->
+                let msg = CloudQueueMessage(Newtonsoft.Json.JsonConvert.SerializeObject(weatherData))
+                do! ecalationLvlHighQueue.AddMessageAsync msg   
     }

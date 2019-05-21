@@ -18,6 +18,7 @@
     <Compile Include="ExpectoTestSuite.fs" />
     <Compile Include="EscalationLvlLow.fs" />
     <Compile Include="EscalationLvlHigh.fs" />
+    <Compile Include="SendReport.fs" />
     <Compile Include="ReportSheet.fs" />
     <Compile Include="JuniperReports.fs" />
     <Content Include="function.json" />

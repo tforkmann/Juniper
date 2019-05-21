@@ -36,7 +36,8 @@ module HeatPrognose =
           WindSpeed : float
           Humidity : float
           Temperature : float
-          Visibility : float }
+          Visibility : float
+          IsFaulty : bool }
 
     type Measure =
         { Value : float

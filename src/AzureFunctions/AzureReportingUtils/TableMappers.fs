@@ -14,4 +14,6 @@ let mapWeatherData (entity : DynamicTableEntity) : WeatherData =
       WindSpeed = getDoubleProperty "WindSpeed" entity
       Humidity = getDoubleProperty "Humidity" entity
       Temperature = getDoubleProperty "Temperature" entity
-      Visibility = getDoubleProperty "Visibility" entity }
+      Visibility = getDoubleProperty "Visibility" entity
+      IsFaulty = getBoolProperty "IsFaulty" entity
+       }

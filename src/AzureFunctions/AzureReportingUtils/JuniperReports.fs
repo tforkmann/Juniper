@@ -5,6 +5,9 @@ open Juniper.Ids
 open Juniper.HeatPrognose
 open Juniper
 open Expecto
+open PostToQueue
+open Microsoft.WindowsAzure.Storage.Queue
+
 let reportInfo = 
     { ReportName = "Test"
       ReportTime = "Test"
@@ -56,12 +59,14 @@ open Microsoft.Azure.WebJobs
 open FSharp.Control.Tasks.ContextInsensitive
 open Microsoft.Extensions.Logging
 open TriggerNames
+open BlobNames
 
 [<FunctionName("JuniperReports")>]
 
 let Run([<QueueTrigger(JuniperReports)>] content:string, log:ILogger) =
     task {
       let testSheetInsert = Newtonsoft.Json.JsonConvert.DeserializeObject<SheetInsert> content
+      use xlapp = startExcelApp ()
       do!
             report {
               sheetInsert testSheetInsert
@@ -70,4 +75,16 @@ let Run([<QueueTrigger(JuniperReports)>] content:string, log:ILogger) =
               logSuccess "Finished testReport"
           }
       log.LogInformation ("Create TestReport")
+      let blobId = testSheetInsert.ReportInformation.ReportID |> string
+      let reportName = testSheetInsert.ReportInformation.ReportName
+      do! saveExcelWbToBlob blobId xlapp 
+      let content : Escalation.MailContent = {
+        Subject = "JuniperReport"
+        Recipient = "Recipient"
+        RecipientEMail = "recipient@mail.de"
+        Text = "DataCheck: Please find attached our hopefully correct report."
+        Attachments = [|TestReport,blobId + ".xlsx",reportName|]
+        }
+      let msg = CloudQueueMessage(Newtonsoft.Json.JsonConvert.SerializeObject(content))
+      do! postToQueue sendReport msg
      }
