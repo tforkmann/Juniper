@@ -7,6 +7,8 @@ open Microsoft.Extensions.Logging
 open GetTableEntry
 open CloudTable
 open Expecto
+open PostToQueue
+open Microsoft.WindowsAzure.Storage.Queue
 [<FunctionName("ExpectoTestSuite")>]
 let Run([<TimerTrigger("0 0 0 1 * *")>] myTimer : TimerInfo, log : ILogger) =
     task {
@@ -20,5 +22,11 @@ let Run([<TimerTrigger("0 0 0 1 * *")>] myTimer : TimerInfo, log : ILogger) =
         let result =
             testList
             |> runTests defaultConfig
-        log.LogInformation ("Test Success {0}", result)                                    
+        log.LogInformation ("Test Success {0}", result)    
+        match result with
+        | 1 ->
+            let msg = CloudQueueMessage(Newtonsoft.Json.JsonConvert.SerializeObject(weatherData))
+            do! juniperReportsQueue.AddMessageAsync msg   
+        | _ -> ()
+
     }

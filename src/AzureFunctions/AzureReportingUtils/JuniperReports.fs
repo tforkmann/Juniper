@@ -5,7 +5,6 @@ open Juniper.Ids
 open Juniper.HeatPrognose
 open Juniper
 open Expecto
-open FileWriter
 let reportInfo = 
     { ReportName = "Test"
       ReportTime = "Test"
@@ -32,7 +31,7 @@ let sheetData =
       Measures = locationValues }      
 let testSheetInsert = 
     let excelPackage = startExcelApp ()
-    { ExportedReport = reportInfo
+    { ReportInformation = reportInfo
       ReportData = Some sheetData
       ExcelPackage = Some excelPackage }
 let testWorkSheets = 
@@ -53,10 +52,24 @@ let expectoTests (reportData:ReportData) =
        [ testCase "Test Sum of measures is bigger or equal 0."
             <| fun () -> Expect.isGreaterThanOrEqual sumMeasures 0. "SumData should be bigger than or equal"]
 
-let testReport =
-    report {
-        sheetInsert testSheetInsert
-        testReportData expectoTests
-        worksheetList testWorkSheets
-        logSuccess "Finished testReport"
-    }
+
+
+open Microsoft.Azure.WebJobs
+open FSharp.Control.Tasks.ContextInsensitive
+open Microsoft.Extensions.Logging
+open TriggerNames
+
+[<FunctionName("JuniperReports")>]
+
+let Run([<QueueTrigger(JuniperReports)>] content:string, log:ILogger) =
+    task {
+      let testSheetInsert = Newtonsoft.Json.JsonConvert.DeserializeObject<SheetInsert> content
+      do!
+            report {
+              sheetInsert testSheetInsert
+              testReportData expectoTests
+              worksheetList testWorkSheets
+              logSuccess "Finished testReport"
+          }
+      log.LogInformation ("Create TestReport")
+     }

@@ -67,7 +67,7 @@ module ExcelUtils =
                     try
                         let exportDir = @".\reports\"
                         let dateTime = DateTime.Now.ToString("yyyyMMdd_HHmm")
-                        let reportPath = Path.Combine(exportDir + "/" + sheetInsert.ExportedReport.ReportName + "_" + dateTime + ".xlsx")
+                        let reportPath = Path.Combine(exportDir + "/" + sheetInsert.ReportInformation.ReportName + "_" + dateTime + ".xlsx")
                         let data = package.GetAsByteArray()
                         File.WriteAllBytes(reportPath, data)
                         printfn "Saving Excel report at %A" reportPath

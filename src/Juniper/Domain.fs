@@ -67,7 +67,7 @@ module ReportPipeLine =
           Measures : HeatPrognose.Measure [] }
 
     type SheetInsert =
-        { ExportedReport : XLSReport
+        { ReportInformation : XLSReport
           ExcelPackage : ExcelPackage option
           ReportData : SheetData option }
 

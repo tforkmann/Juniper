@@ -2,6 +2,8 @@ module JuniperTests
 
 open System
 open Juniper
+open Juniper.HeatPrognose
+open Juniper.Ids
 open Expecto
 open FileWriter
 let reportInfo = 
@@ -11,11 +13,9 @@ let reportInfo =
       ReportTyp = "Test"
       ReportID = ReportId 1 }
 let testLocation =
-    [|  { Description = "Test1"
+    [|  { Name = "Test1"
           LocationId = LocationId 1
-          PostalCode = None
-          Street = None
-          Location = Some "TestLocation" }|]
+          PostalCode = None }|]
 let locationValues = 
     [| 
         { Value = 0.
@@ -32,12 +32,12 @@ let sheetData =
       Measures = locationValues }      
 let testSheetInsert = 
     let excelPackage = startExcelApp ()
-    { ExportedReport = reportInfo
+    { ReportInformation = reportInfo
       ReportData = Some sheetData
       ExcelPackage = Some excelPackage }
 let testWorkSheets = 
     printfn "testWorksheet"
-    [ ReportSheet.testSheet, "TestWorksheet" ]
+    [ TestSheet.testSheet, "TestWorksheet" ]
 
 let expectoTests (reportData:ReportData) =
     let sheetInsert = 
@@ -54,17 +54,9 @@ let expectoTests (reportData:ReportData) =
             <| fun () -> Expect.isGreaterThanOrEqual sumMeasures 0. "SumData should be bigger than or equal"]
 
 let testReport =
-    // try 
     report {
         sheetInsert testSheetInsert
         testReportData expectoTests
         worksheetList testWorkSheets
-        logSuccess "Finished QuarterlyReportExternal"
+        logSuccess "Finished TestReport"
     }
-    // with exn ->
-    //     let msg =
-    //         sprintf "Can't excecute Async ReportBuilding. %sMessage: %s.%sInnerMessage: %s" Environment.NewLine exn.Message Environment.NewLine
-    //             exn.InnerException.Message
-    //     logError exn msg
-    //     printfn "%s" msg
-    //     failwith msg
