@@ -52,8 +52,6 @@ let expectoTests (reportData:ReportData) =
        [ testCase "Test Sum of measures is bigger or equal 0."
             <| fun () -> Expect.isGreaterThanOrEqual sumMeasures 0. "SumData should be bigger than or equal"]
 
-
-
 open Microsoft.Azure.WebJobs
 open FSharp.Control.Tasks.ContextInsensitive
 open Microsoft.Extensions.Logging
