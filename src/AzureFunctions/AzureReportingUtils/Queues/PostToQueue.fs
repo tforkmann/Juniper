@@ -50,7 +50,6 @@ open Juniper.Logging
         let message = CloudQueueMessage(Newtonsoft.Json.JsonConvert.SerializeObject msg)
         do! queue.AddMessageAsync(message)
     }            
-    let validationQueue = getQueue connected Validation  
+    let juniperReportsQueue = getQueue connected JuniperReports  
     let ecalationLvlHighQueue = getQueue connected EscalationLvlHigh
     let ecalationLvlLowQueue = getQueue connected EscalationLvlLow
-    let expandQueue = getQueue connected Expand
