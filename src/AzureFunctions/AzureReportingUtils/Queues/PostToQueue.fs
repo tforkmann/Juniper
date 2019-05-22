@@ -53,3 +53,4 @@ open Juniper.Logging
     let juniperReportsQueue = getQueue connected JuniperReports  
     let ecalationLvlHighQueue = getQueue connected EscalationLvlHigh
     let ecalationLvlLowQueue = getQueue connected EscalationLvlLow
+    let sendReport = getQueue connected SendReport
