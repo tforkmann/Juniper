@@ -1,0 +1,14 @@
+{
+  "generatedBy": "Microsoft.NET.Sdk.Functions-1.0.28",
+  "configurationSource": "attributes",
+  "bindings": [
+    {
+      "type": "queueTrigger",
+      "queueName": "escalation-lvl-low",
+      "name": "content"
+    }
+  ],
+  "disabled": false,
+  "scriptFile": "../bin/AzureReportingUtils.dll",
+  "entryPoint": "EscalationLvlLow.Run"
+}

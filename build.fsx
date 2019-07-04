@@ -13,20 +13,19 @@ nuget Fake.Core.Trace
 nuget Fake.IO.Zip
 nuget Fake.Tools.Git
 nuget Fake.DotNet.Testing.Expecto
+nuget Fake.DotNet.Paket
+nuget Fake.Core.UserInput
 //"
 
 #load ".fake/build.fsx/intellisense.fsx"
 
-open System
 open System.IO
 open Fake.Core
 open Fake.DotNet
 open Fake.IO
-open Fake.Tools
 open Fake.Core.TargetOperators
 open Fake.IO.Globbing.Operators
-open Fake.DotNet.Testing
-
+open Fake.Core
 //-----------------------------------------------
 // Information about the project to be used at NuGet and in AssemblyInfo files
 // --------------------------------------------------------------------------------------
@@ -35,8 +34,9 @@ let project = "Juniper"
 let authors = ["Tim Forkmann"]
 let configuration = "Release"
 let deployDir = Path.getFullName "./deploy"
-let release = ReleaseNotes.load "RELEASE_NOTES.md"
-let buildDir = "./bin/"
+let buildDir  = Path.getFullName "./build/"
+let nugetPath  = Path.getFullName "./nuget/"
+let tempDir = "temp"
 
 // --------------------------------------------------------------------------------------
 // PlatformTools
@@ -186,5 +186,67 @@ Target.create "PublishAzureFunctions" (fun _ ->
 
         runFunc funcTool ("azure functionapp publish " + functionApp) deployDir
 )
+// --------------------------------------------------------------------------------------
+// Build a NuGet package
+
+Target.create "Install" (fun _ ->
+    Trace.tracef "Target Install"
+
+    !! "src/**/*.fsproj"
+    |> Seq.iter (fun s ->
+        let dir = Path.GetDirectoryName s
+        DotNet.restore id dir)
+)
+
+Target.create "Build" (fun _ ->
+    !! "src/**/*.fsproj"
+    |> Seq.iter (fun s ->
+        let dir = Path.GetDirectoryName s
+        DotNet.build id dir)
+)
+
+Target.create "Publish" (fun _ ->
+    !! "src/**/*.fsproj"
+    |> Seq.iter (fun s ->
+        let dir = Path.GetDirectoryName s
+        let publishArgs = sprintf "publish -c Release -o \"%s\"" buildDir
+        runDotNet publishArgs dir)
+)
+
+// --------------------------------------------------------------------------------------
+// Build a NuGet package
+let release = ReleaseNotes.load "RELEASE_NOTES.md"
+Target.create "Pack" (fun _ ->
+    Paket.pack (fun p ->
+        { p with
+            OutputPath = nugetPath
+            Version = release.NugetVersion
+            ReleaseNotes = release.Notes.[0]            
+        }
+    )
+)
+
+let getBuildParam = Environment.environVar
+let isNullOrWhiteSpace = System.String.IsNullOrWhiteSpace
+
+Target.create "Push" (fun _ ->
+    let key =
+        match getBuildParam "nuget-key" with
+        | s when not (isNullOrWhiteSpace s) -> s
+        | _ -> UserInput.getUserPassword "NuGet Key: "
+    Paket.push (fun p -> { p with WorkingDir = nugetPath; ApiKey = key }))
+
+let DoNothing = ignore
+
+Target.create "Release" DoNothing
+
+// Build order
+"Clean"
+    ==> "Install"
+    ==> "Build"
+    ==> "Publish"
+    ==> "Pack"
+    // ==> "Push"
+    ==> "Release"
 
 Target.runOrDefault "Build"
