@@ -9,6 +9,7 @@ nuget Fake.DotNet.Cli
 nuget Fake.Core.Environment
 nuget Fake.Installer.Wix
 nuget Newtonsoft.Json
+nuget System.ServiceProcess.ServiceController 
 nuget Fake.Core.Trace
 nuget Fake.IO.Zip
 nuget Fake.Tools.Git
@@ -18,25 +19,68 @@ nuget Fake.Core.UserInput
 //"
 
 #load ".fake/build.fsx/intellisense.fsx"
-
+#if !FAKE
+  #r "netstandard"
+#endif 
+open System
 open System.IO
 open Fake.Core
 open Fake.DotNet
 open Fake.IO
 open Fake.Core.TargetOperators
 open Fake.IO.Globbing.Operators
-open Fake.Core
+open Fake.Tools
+
 //-----------------------------------------------
 // Information about the project to be used at NuGet and in AssemblyInfo files
 // --------------------------------------------------------------------------------------
 
-let project = "Juniper"
-let authors = ["Tim Forkmann"]
-let configuration = "Release"
+let servicePath = Path.getFullName "./src/AzureUpload"  
+
+let serverPath = Path.getFullName "./src/Server"
+let clientPath = Path.getFullName "./src/Client"
 let deployDir = Path.getFullName "./deploy"
-let buildDir  = Path.getFullName "./build/"
-let nugetPath  = Path.getFullName "./nuget/"
-let tempDir = "temp"
+let clientDeployPath = Path.combine clientPath "deploy"
+let release = ReleaseNotes.load "RELEASE_NOTES.md"
+let serverTestsPath = Path.getFullName "./test/ServerTests"
+let clientTestsPath = Path.getFullName "./test/UITests"
+let clientTestExecutables = "test/UITests/**/bin/**/*Tests*.exe"
+let nupkgDir = Path.getFullName "./nupkg"
+let templateName = "Juniper"
+
+let buildDir  = "./build/"
+
+
+// Git configuration (used for publishing documentation in gh-pages branch)
+// The profile where the project is posted
+let gitHome = "https://github.com/tforkmann"
+// The name of the project on GitHub
+let gitName = "juniper"
+
+// The name of the project
+// (used by attributes in AssemblyInfo, name of a NuGet package and directory in 'src')
+let project = "Juniper"
+
+let projectUrl = sprintf "%s/%s" gitHome gitName
+
+// Short summary of the project
+// (used as description in AssemblyInfo and as a short summary for NuGet package)
+let summary = "Source code formatter for F#"
+
+let copyright = "Copyright \169 2018"
+let iconUrl = "https://raw.githubusercontent.com/fsprojects/Juniper/master/Juniper_logo.png"
+let licenceUrl = "https://github.com/fsprojects/Juniper/blob/master/LICENSE.md"
+let configuration = DotNet.BuildConfiguration.Release
+
+// Longer description of the project
+// (used as a description for NuGet package; line breaks are automatically cleaned up)
+let description = """This library Juniper contains Azure business reporting utils and uses an high level 
+computation expression on top of the EPPlus excel package to create efficent excel reports."""
+// List of author names (for NuGet package)
+let authors = [ "Tim Forkmann"]
+let owner = "Tim Forkmann"
+// Tags for your project (for NuGet package)
+let tags = "Azure business reporting utils"
 
 // --------------------------------------------------------------------------------------
 // PlatformTools
@@ -101,7 +145,7 @@ let functionsPath =  "./src/AzureFunctions"
 
 let runFunc cmd args workingDir  =
     let arguments = args |> String.split ' ' |> Arguments.OfArgs
-    Command.RawCommand (cmd, arguments)
+    RawCommand (cmd, arguments)
     |> CreateProcess.fromCommand
     |> CreateProcess.withWorkingDirectory workingDir
     |> CreateProcess.ensureExitCode
@@ -109,7 +153,7 @@ let runFunc cmd args workingDir  =
     |> ignore
 let getFunctionApp projectName =
     match projectName with 
-    | "AzureReportingUtils.fsproj" -> "azurereportingutils"   
+    | "AzurereportingUtils.fsproj" -> "azurereportingutils"   
     | _ ->
         "unmatched"
 
@@ -122,7 +166,6 @@ Target.create "PublishAzureFunctions" (fun _ ->
     let funcTool = platformTool "npm" "func.cmd"
     let deployDir = deployDir + "/functions"
     Shell.cleanDir deployDir
-    Trace.tracefn "Loop of FunctionApps"
 
     for functionApp in functionApps do
         Trace.tracefn "FunctionAppName %s" functionApp
@@ -186,17 +229,28 @@ Target.create "PublishAzureFunctions" (fun _ ->
 
         runFunc funcTool ("azure functionapp publish " + functionApp) deployDir
 )
+
+
+open System.Text.RegularExpressions
+module Util =
+
+    let visitFile (visitor: string->string) (fileName: string) =
+        File.ReadAllLines(fileName)
+        |> Array.map (visitor)
+        |> fun lines -> File.WriteAllLines(fileName, lines)
+
+    let replaceLines (replacer: string->Match->string option) (reg: Regex) (fileName: string) =
+        fileName |> visitFile (fun line ->
+            let m = reg.Match(line)
+            if not m.Success
+            then line
+            else
+                match replacer line m with
+                | None -> line
+                | Some newLine -> newLine)
+
 // --------------------------------------------------------------------------------------
 // Build a NuGet package
-
-Target.create "Install" (fun _ ->
-    Trace.tracef "Target Install"
-
-    !! "src/**/*.fsproj"
-    |> Seq.iter (fun s ->
-        let dir = Path.GetDirectoryName s
-        DotNet.restore id dir)
-)
 
 Target.create "Build" (fun _ ->
     !! "src/**/*.fsproj"
@@ -205,48 +259,81 @@ Target.create "Build" (fun _ ->
         DotNet.build id dir)
 )
 
-Target.create "Publish" (fun _ ->
-    !! "src/**/*.fsproj"
-    |> Seq.iter (fun s ->
-        let dir = Path.GetDirectoryName s
-        let publishArgs = sprintf "publish -c Release -o \"%s\"" buildDir
-        runDotNet publishArgs dir)
-)
-
-// --------------------------------------------------------------------------------------
-// Build a NuGet package
-let release = ReleaseNotes.load "RELEASE_NOTES.md"
-Target.create "Pack" (fun _ ->
-    Paket.pack (fun p ->
+Target.create "UnitTests" (fun _ ->
+    DotNet.test (fun p ->
         { p with
-            OutputPath = nugetPath
-            Version = release.NugetVersion
-            ReleaseNotes = release.Notes.[0]            
+            Configuration = configuration
+            NoRestore = true
+            NoBuild = true
+            // TestAdapterPath = Some "."
+            // Logger = Some "nunit;LogFilePath=../../TestResults.xml"
+            // Current there is an issue with NUnit reporter, https://github.com/nunit/nunit3-vs-adapter/issues/589
         }
-    )
+    ) "src/Juniper.Tests/Juniper.Tests.fsproj"
+)
+Target.create "Pack" (fun _ ->
+    let nugetVersion = release.NugetVersion
+
+    let pack project =
+        let projectPath = sprintf "src/%s/%s.fsproj" project project
+        let args =
+            let defaultArgs = MSBuild.CliArguments.Create()
+            { defaultArgs with
+                      Properties = [
+                          "Title", project
+                          "PackageVersion", nugetVersion
+                          "Authors", (String.Join(" ", authors))
+                          "Owners", owner
+                          "PackageRequireLicenseAcceptance", "false"
+                          "Description", description
+                          "Summary", summary
+                          "PackageReleaseNotes", ((String.toLines release.Notes).Replace(",",""))
+                          "Copyright", copyright
+                          "PackageTags", tags
+                          "PackageProjectUrl", projectUrl
+                          "PackageIconUrl", iconUrl
+                          "PackageLicenseUrl", licenceUrl
+                      ] }
+        
+        DotNet.pack (fun p ->
+            { p with
+                  NoBuild = true
+                  Configuration = configuration
+                  OutputPath = Some "build"
+                  MSBuildParams = args
+              }) projectPath 
+
+    pack "Juniper"
 )
 
 let getBuildParam = Environment.environVar
-let isNullOrWhiteSpace = System.String.IsNullOrWhiteSpace
+let isNullOrWhiteSpace = String.IsNullOrWhiteSpace
 
-Target.create "Push" (fun _ ->
+// Workaround for https://github.com/fsharp/FAKE/issues/2242
+let pushPackage additionalArguments =
+    let nugetCmd fileName key = sprintf "nuget push %s -k %s -s https://www.nuget.org/" fileName key
     let key =
         match getBuildParam "nuget-key" with
         | s when not (isNullOrWhiteSpace s) -> s
         | _ -> UserInput.getUserPassword "NuGet Key: "
-    Paket.push (fun p -> { p with WorkingDir = nugetPath; ApiKey = key }))
+    IO.Directory.GetFiles(buildDir, "*.nupkg", SearchOption.TopDirectoryOnly)
+    |> Seq.iter (fun nupkg ->
+        Trace.tracef "Nupkg %s" nupkg
+        let cmd = nugetCmd nupkg  key
+        runDotNet cmd buildDir
+    )
 
-let DoNothing = ignore
+Target.create "Push" (fun _ -> pushPackage [])
 
-Target.create "Release" DoNothing
+Target.create "Release" ignore
 
 // Build order
 "Clean"
-    ==> "Install"
     ==> "Build"
-    ==> "Publish"
+    ==> "UnitTests"
     ==> "Pack"
-    // ==> "Push"
+    ==> "Push"
     ==> "Release"
 
+// start build
 Target.runOrDefault "Build"

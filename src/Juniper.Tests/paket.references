@@ -9,8 +9,6 @@ group Juniper
     System.Data.SqlClient
     WindowsAzure.Storage
     Taskbuilder.fs
-    FSharp.Core
     Microsoft.ApplicationInsights
     Microsoft.ApplicationInsights.DependencyCollector
     Microsoft.ApplicationInsights.PerfCounterCollector    
-    System.Configuration.ConfigurationManager

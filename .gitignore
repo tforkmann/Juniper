@@ -1,9 +1,9 @@
 packages/
 paket-files/
+build
 bin
 logs/*
 obj/
-tools/*
 test/obj/
 .vs/*
 .ionide/

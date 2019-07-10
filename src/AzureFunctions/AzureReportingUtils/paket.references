@@ -11,6 +11,8 @@ group AzureFunctions
     Microsoft.ApplicationInsights.PerfCounterCollector
     Newtonsoft.Json
     EPPlus
+    FParsec
+    FSharp.Data
     Expecto
     Expecto.BenchmarkDotNet
     Expecto.FsCheck

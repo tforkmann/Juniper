@@ -1,4 +1,4 @@
-module JuniperReports
+module JuniperTests
 
 open System
 open Juniper

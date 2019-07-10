@@ -2,7 +2,7 @@ module EscalationLvlLow
 
 open Microsoft.Azure.WebJobs
 open Newtonsoft.Json
-open Juniper.Escalation
+open Domain
 open System.Net.Mail
 open CreateBlob
 open FSharp.Control.Tasks.ContextInsensitive
@@ -10,6 +10,7 @@ open System.IO
 open System.Net.Mime
 open Microsoft.Extensions.Logging
 open TriggerNames
+open Escalation
 
 let server = "mail.addresse.something"
 let user = "escalation@domain.something"
