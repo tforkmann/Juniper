@@ -271,6 +271,21 @@ Target.create "UnitTests" (fun _ ->
         }
     ) "src/Juniper.Tests/Juniper.Tests.fsproj"
 )
+
+Target.create "PrepareRelease" (fun _ ->
+    Git.Branches.checkout "" false "master"
+    Git.CommandHelper.directRunGitCommand "" "fetch origin" |> ignore
+    Git.CommandHelper.directRunGitCommand "" "fetch origin --tags" |> ignore
+
+    Git.Staging.stageAll ""
+    Git.Commit.exec "" (sprintf "Bumping version to %O" release.NugetVersion)
+    Git.Branches.pushBranch "" "origin" "master"
+
+    let tagName = string release.NugetVersion
+    Git.Branches.tag "" tagName
+    Git.Branches.pushTag "" "origin" tagName
+)
+
 Target.create "Pack" (fun _ ->
     let nugetVersion = release.NugetVersion
 
@@ -310,30 +325,26 @@ let getBuildParam = Environment.environVar
 let isNullOrWhiteSpace = String.IsNullOrWhiteSpace
 
 // Workaround for https://github.com/fsharp/FAKE/issues/2242
-let pushPackage additionalArguments =
-    let nugetCmd fileName key = sprintf "nuget push %s -k %s -s https://www.nuget.org/" fileName key
+let pushPackage arguments =
+    let nugetCmd fileName key = sprintf "nuget push %s -k %s -s nuget.org/" fileName key
     let key =
         match getBuildParam "nuget-key" with
         | s when not (isNullOrWhiteSpace s) -> s
         | _ -> UserInput.getUserPassword "NuGet Key: "
-    IO.Directory.GetFiles(buildDir, "*.nupkg", SearchOption.TopDirectoryOnly)
-    |> Seq.iter (fun nupkg ->
-        Trace.tracef "Nupkg %s" nupkg
-        let cmd = nugetCmd nupkg  key
-        runDotNet cmd buildDir
-    )
+    let fileName = IO.Directory.GetFiles(buildDir, "*.nupkg", SearchOption.TopDirectoryOnly) |> Seq.head
+    Trace.tracef "fileName %s" fileName
+    let cmd = nugetCmd fileName key
+    runDotNet cmd buildDir
 
-Target.create "Push" (fun _ -> pushPackage [])
-
-Target.create "Release" ignore
+Target.create "Push" (fun _ -> pushPackage [] )
 
 // Build order
 "Clean"
     ==> "Build"
     ==> "UnitTests"
+    ==> "PrepareRelease"
     ==> "Pack"
     ==> "Push"
-    ==> "Release"
 
 // start build
 Target.runOrDefault "Build"

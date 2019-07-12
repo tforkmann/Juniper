@@ -1,3 +1,5 @@
+### 0.3.0 - 12.07.2019
+* Update build script
 
 ### 0.2.0 - 12.07.2019
 * Make Juniper type inspecific
