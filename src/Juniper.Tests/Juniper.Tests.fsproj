@@ -12,6 +12,7 @@
     <Compile Include="../Shared/SpecificDomain.fs" />
     <Compile Include="../Shared/ReportSheet.fs" />
     <Compile Include="JuniperTests.fs" />
+    <Compile Include="UnitTests.fs" />
     <Compile Include="Program.fs" />
   </ItemGroup>
   <Import Project="..\..\.paket\Paket.Restore.targets" />
