@@ -47,7 +47,9 @@ let expectoTests (reportData:ReportData) =
         | None -> failwith "no test possible"
     let sumMeasures = 
         match sheetInsert.ReportData with
-        | Some data -> data.Measures |> Array.sumBy (fun x -> x.Value)
+        | Some data -> 
+            let castedData = data :?> DomainSheetData
+            castedData.Measures |> Array.sumBy (fun x -> x.Value)
         | None -> 0.
          
     testList "Test if Sum of measures is not out of scope"
