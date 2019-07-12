@@ -9,6 +9,8 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="../Shared/SpecificDomain.fs" />
+    <Compile Include="../Shared/ReportSheet.fs" />
     <Compile Include="JuniperTests.fs" />
     <Compile Include="Program.fs" />
   </ItemGroup>

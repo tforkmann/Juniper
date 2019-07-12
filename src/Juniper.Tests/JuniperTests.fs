@@ -1,11 +1,12 @@
 module JuniperTests
 
 open System
-open Juniper
+open SpecificDomain.DomainIds
+open SpecificDomain.HeatPrognose
 open Domain
 open Ids
 open Expecto
-open FileWriter
+open Juniper
 let reportInfo = 
     { ReportName = "Test"
       ReportTime = "Test"
@@ -33,7 +34,7 @@ let sheetData =
 let testSheetInsert = 
     let excelPackage = startExcelApp ()
     { ExportedReport = reportInfo
-      ReportData = Some sheetData
+      ReportData = Some (sheetData  :> obj)
       ExcelPackage = Some excelPackage }
 let testWorkSheets = 
     printfn "testWorksheet"
@@ -46,7 +47,9 @@ let expectoTests (reportData:ReportData) =
         | None -> failwith "no test possible"
     let sumMeasures = 
         match sheetInsert.ReportData with
-        | Some data -> data.Measures |> Array.sumBy (fun x -> x.Value)
+        | Some data ->
+            let domainSheetData = data :?> DomainSheetData
+            domainSheetData.Measures |> Array.sumBy (fun x -> x.Value)
         | None -> 0.
          
     testList "Test if Sum of measures is not out of scope"

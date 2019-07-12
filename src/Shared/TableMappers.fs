@@ -1,10 +1,8 @@
 module TableMappers
 
 open Microsoft.WindowsAzure.Storage.Table
-open Juniper
-open Domain
-open Ids
-open HeatPrognose
+open SpecificDomain.DomainIds
+open SpecificDomain.HeatPrognose
 open CreateTable
 
 let mapLocation (entity : DynamicTableEntity) : Location =

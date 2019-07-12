@@ -30,9 +30,13 @@ module ReportPipeline =
             printLogFileTotalTime stopWatch msgStr ()
         }
 
+    let zeroWorkSheet (sheet : SheetInsert option) = 
+        task {
+            ()
+        }
     let zero =
         printfn "Zero"
-        { WorkSheet = ReportSheet.testSheet
+        { WorkSheet = zeroWorkSheet
           Name = ""
           LogMsg = ""
           BuildMsg = ""

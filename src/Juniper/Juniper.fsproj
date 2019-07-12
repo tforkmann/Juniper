@@ -12,7 +12,6 @@
     <Compile Include="../Shared/BlobNames.fs" />
     <Compile Include="../Shared/CreateBlob.fs" />
     <Compile Include="ExcelUtils.fs" />
-    <Compile Include="ReportSheet.fs" />
     <Compile Include="Juniper.fs" />
   </ItemGroup>
   <Import Project="..\..\.paket\Paket.Restore.targets" />

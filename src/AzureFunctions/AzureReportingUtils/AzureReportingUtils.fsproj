@@ -10,6 +10,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="../../Shared/FileWriter.fs" />
+    <Compile Include="../../Shared/SpecificDomain.fs" />    
     <Compile Include="../../Shared/TableNames.fs" />
     <Compile Include="../../Shared/CreateTable.fs" />
     <Compile Include="../../Shared/BlobNames.fs" />
@@ -20,7 +21,8 @@
     <Compile Include="../../Shared/GetTableEntry.fs" />
     <Compile Include="../../Shared/CloudTable.fs" />
     <Compile Include="../../Shared/TriggerNames.fs" />
-    <Compile Include="../../Shared/PostToQueue.fs" />
+    <Compile Include="../../Shared/PostToQueue.fs" />    
+    <Compile Include="../../Shared/ReportSheet.fs" />
     <Compile Include="ExpectoTestSuite.fs" />
     <Compile Include="EscalationLvlLow.fs" />
     <Compile Include="EscalationLvlHigh.fs" />

@@ -1,0 +1,103 @@
+// type Person(name) =
+//     member x.Name = name        
+    
+//     abstract Greet : unit -> unit
+//     default x.Greet() = printfn "Hi, I'm %s" x.Name
+    
+// type Quebecois(name) =
+//     inherit Person(name)
+    
+//     override x.Greet() = printfn "Bonjour, je m'appelle %s, eh." x.Name
+
+// let terrance, phillip = Person("Terrance"), Quebecois("Phillip")    
+
+// terrance.Greet()
+
+// phillip.Greet()
+
+
+// type SheetData(data) =
+//     member __.Data = data        
+    
+//     abstract GetData : unit -> obj
+//     default __.GetData() = data  
+//     //     printfn "Hi, I'm"
+//     //     "" |> obj
+    
+// type SpecificSheetData(data) =
+//     inherit SheetData(data)
+    
+//     override x.GetData() =  //Greet() = printfn "Bonjour, je m'appelle %s, eh." x.Name
+
+// let terrance, phillip = Person("Terrance"), Quebecois("Phillip")    
+
+// terrance.Greet()
+
+// phillip.Greet()
+open System
+type Location =
+    { Name : string
+      LocationId : int
+      PostalCode : string option }
+type Measure =
+    { Value : float
+      Description : string
+      UnitOfMeasure : string
+      Time : DateTime }
+type SheetData =
+    { Location : Location
+      Measures : Measure }
+// let obj1 = { new System.Object() with member x.ToString() = "F#" }
+// obj1
+
+
+let validate<'a, 'b> (cast: 'a -> 'b) (x: 'a) =
+    try
+        cast x |> Some
+    with _ -> None
+
+let a = validate int "3423"    
+let d = validate<obj, SheetData> Convert.ToDecimal (null :> obj)
+
+type IBase1 =
+    abstract member F : obj
+
+type Derived1() =
+    interface IBase1 with
+        member  this.F  = 
+                    {   Location = 1
+                        Measures = 1 }
+
+
+open System
+
+type Base () = do ()
+type Derived () = inherit Base ()
+let baseInstance = Base()
+let derivedInstance = Derived()
+
+for x in 
+  ([baseInstance;
+  baseInstance.GetType();
+  baseInstance.GetType().Name;
+  derivedInstance;
+  derivedInstance.GetType();
+  derivedInstance.GetType().Name;
+  derivedInstance :> Base;
+  (derivedInstance :> Base).GetType();
+  (derivedInstance :> Base).GetType().Name;
+  ] : obj list) do
+  printfn"%A" x
+
+Console.ReadKey() |> ignore
+
+let value = "carrot"
+let valueObj = upcast value : obj
+
+let text (v : obj) =
+    match v with
+    | :? string -> "Is a string"
+    | _ -> "Not a string"
+
+let f (x:obj) (y:float) = 
+    let x' = x :?> SheetData

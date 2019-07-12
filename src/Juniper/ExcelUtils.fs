@@ -21,31 +21,6 @@ module ExcelUtils =
             do! blobBlock.UploadFromStreamAsync(stream)
         }
 
-    ///ReportHeader
-    let reportHeader (reportName : string) (measures : Measure []) (wks : ExcelWorksheet) =
-        let timeFrom =
-            if measures <> [||] then
-                measures
-                |> Array.map (fun x -> x.Time)
-                |> Array.min
-                |> getNiceDateString
-            else ""
-
-        let timeTo =
-            if measures <> [||] then
-                measures
-                |> Array.map (fun x -> x.Time)
-                |> Array.max
-                |> getNiceDateString
-            else ""
-
-        wks.Cells.[1, 1].Value <- "ReportName:"
-        wks.Cells.[1, 2].Value <- reportName
-        wks.Cells.[3, 1].Value <- "Date from:"
-        wks.Cells.[4, 1].Value <- "Dat to:"
-        wks.Cells.[3, 2].Value <- timeFrom
-        wks.Cells.[4, 2].Value <- timeTo
-
     /// <summary>Inserts a Array2d in a given worksheet range in a sequence.</summary>
     let insertValues startRow startCol (worksheet : ExcelWorksheet) (array : obj [] []) =
         array |> Array.Parallel.iteri (fun i x -> x |> Array.Parallel.iteri (fun j y -> worksheet.Cells.[startRow + i, startCol + j].Value <- y))

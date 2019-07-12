@@ -5,7 +5,8 @@ open Juniper
 open Domain
 open Ids
 open Expecto
-open FileWriter
+open SpecificDomain.DomainIds
+open SpecificDomain.HeatPrognose
 let reportInfo = 
     { ReportName = "Test"
       ReportTime = "Test"
@@ -33,7 +34,7 @@ let sheetData =
 let testSheetInsert = 
     let excelPackage = startExcelApp ()
     { ExportedReport = reportInfo
-      ReportData = Some sheetData
+      ReportData = Some (sheetData  :> obj)
       ExcelPackage = Some excelPackage }
 let testWorkSheets = 
     printfn "testWorksheet"
