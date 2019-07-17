@@ -1,3 +1,5 @@
+### 0.6.0 - 17.07.2019
+* Update Build Script
 ### 0.5.0 - 17.07.2019
 * Implement Thoth.Json.Net
 ### 0.4.0 - 17.07.2019
