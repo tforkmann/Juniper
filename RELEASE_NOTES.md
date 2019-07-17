@@ -1,3 +1,5 @@
+### 0.8.0 - 17.07.2019
+* Fix Build Script again
 ### 0.7.0 - 17.07.2019
 * Fix Build Script
 ### 0.6.0 - 17.07.2019
