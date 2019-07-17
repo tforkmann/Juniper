@@ -38,20 +38,30 @@ let sheetData =
 let testSheetInsert = 
     logOk Local "SheetInsert"
     let excelPackage = startExcelApp ()
-    { ExportedReport = reportInfo
-      ReportData = 
-        logOk Local "ReportData"
-        Some (
-            try 
-                DomainSheetData.Encoder sheetData |> Encode.toString 0 
-            with 
-            | exn -> 
-                logError exn Local "Couldn't cast to obj"
-                failwithf "Couldn't cast to obj")
-      ExcelPackage = Some excelPackage }
-let testWorkSheets = 
-    logOk Local "Test Worksheet"
-    [ ReportSheet.testSheet, "TestWorksheet" ]
+    let sheetInsert =
+        { ExportedReport = reportInfo
+          ReportData = 
+            logOk Local "ReportData"
+            Some (
+                try 
+                    DomainSheetData.Encoder sheetData |> Encode.toString 0 
+                with 
+                | exn -> 
+                    logError exn Local "Couldn't cast to obj"
+                    failwithf "Couldn't cast to obj")
+
+          ExcelPackage = Some excelPackage }
+    logOk Local (sprintf "SheetInsert %A" sheetInsert)
+    sheetInsert
+let testWorkSheets () = 
+    try
+        logOk Local "Test Worksheet"
+        // logOk Local (sprintf "SheetInsert %A" sheetInsert)
+        [ ReportSheet.testSheet, "TestWorksheet" ]
+    with    
+    | exn -> 
+        logError exn Local "Couldn't add testWorksheet"
+        failwithf "Couldn't add testWorksheet"        
 
 let expectoTests (reportData:ReportData) =
     logOk Local "ExpectoTests"
@@ -83,15 +93,12 @@ let expectoTests (reportData:ReportData) =
 let testReport =
     try 
         report {
-            // sheetInsert testSheetInsert
+            sheetInsert testSheetInsert
             // testReportData expectoTests
             // worksheetList testWorkSheets
-            logSuccess "Finished QuarterlyReportExternal"
+            // logSuccess "Finished QuarterlyReportExternal"
         }
     with exn ->
-        let msg =
-            sprintf "Can't excecute Async ReportBuilding. %sMessage: %s.%sInnerMessage: %s" Environment.NewLine exn.Message Environment.NewLine
-                exn.InnerException.Message
+        let msg = sprintf "Can't excecute Async ReportBuilding. %s" exn.Message
         logError exn Local msg
-        printfn "%s" msg
         failwith msg

@@ -9,7 +9,7 @@ open FSharp.Control.Tasks.ContextInsensitive
 open System.Threading.Tasks
 let client = TelemetryClient ()
 
-let logPath = Path.GetFullPath(Path.Combine(__SOURCE_DIRECTORY__, "logs"))
+let logPath =  @".\..\..\logs\"
 let logArchivPath = @".\..\..\logs\Archiv\"
 let testPath = __SOURCE_DIRECTORY__ + @".\..\tests\"
 let miniLogFile (dt:DateTime) = 
@@ -71,9 +71,13 @@ let writeLog (status:Result<_,exn>) (logTxt:string) =
     | exn -> 
         printfn "Couldn't write LogFile: %s" exn.Message
         failwithf "Couldn't write LogFile: %s" exn.Message
-
+let logOk devOption = 
+    if devOption = Local then
+        writeLog (Ok())
+    else
+        printfn "Running On Azure %s"
 let moveOldLogFiles () = 
-    printfn "moving old log files"
+    logOk Local "moving old log files"
     let destinationDirectory = Path.GetFullPath(logArchivPath)
     let sourceDirectoryRoot = Path.GetFullPath(logPath)
     let searchPattern = @"*.txt";
@@ -94,11 +98,6 @@ let moveOldLogFiles () =
         printfn "File: %s" logFile
         copyLogFiles logFile destinationDirectory
         deleteOldLogFiles logFile)       
-let logOk devOption = 
-    if devOption = Local then
-        writeLog (Ok())
-    else
-        printfn "Running On Azure %s"
 let logError exn devOption = 
     if devOption = Local then
         moveOldLogFiles ()
@@ -106,7 +105,7 @@ let logError exn devOption =
     else
         printfn "Running On Azure %s"        
 let logWithTiming fnName fn =
-    let sw = System.Diagnostics.Stopwatch.StartNew()
+    let sw = Diagnostics.Stopwatch.StartNew()
     let res = fn()
     logOk Local (sprintf "Time taken to run %s: %O" fnName sw.Elapsed)
     res
@@ -118,6 +117,9 @@ let logWithTimingTask fnName (fn:unit -> Task<'a>) =
         logOk Local (sprintf "Time taken to run %s: %O" fnName sw.Elapsed)
         return res
     }
+
+
+
 let printLogFileTotalTime (stopWatch:Diagnostics.Stopwatch) name ()=
     printfn "Creating log file: %s" name 
     let duration = stopWatch.Elapsed.TotalSeconds

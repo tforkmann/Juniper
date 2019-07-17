@@ -29,7 +29,7 @@ module ReportPipeline =
             printLogFileTotalTime stopWatch msgStr ()
         }
 
-    let zeroWorkSheet (sheet : SheetInsert option) = 
+    let zeroWorkSheet _ = 
         task {
             ()
         }
@@ -54,8 +54,11 @@ module Report =
             logOk Local "Yield Zero"
             zero
         member __.Bind(m, f) = 
+            logOk Local "Bind"
             m |> List.collect f
-        member __.Combine (a, b) = a || b ()
+        member __.Combine (a, b) = 
+            logOk Local "Combine"
+            a || b ()
         member __.Delay(f) = 
             logOk Local "Delay"
             f()
@@ -65,6 +68,7 @@ module Report =
 
         [<CustomOperation("sheetInsert")>]
         member __.SheetInsert(reportData, sheetInsert) = 
+            logOk Local "Doing something"
             logOk Local (sprintf "doing SheetInsert reportData %A sheetInsert %A" reportData sheetInsert)
             { reportData with SheetInsert = Some sheetInsert}
         [<CustomOperation("testReportData")>]
@@ -84,14 +88,17 @@ module Report =
                                   | _ -> failwith "no valid Test result" }
         [<CustomOperation("worksheetList")>]
         member __.WorkSheet(reportData, workSheetsAndName) =
-            logOk Local "Starting workSheet insert"
-            for workSheet, name in workSheetsAndName do
-                logOk Local (sprintf "doing report %s" name)
-                let wksData =
-                    { reportData with Name = name
-                                      WorkSheet = workSheet }
-                createSheetWithLogAndTrack wksData |> ignore
-            reportData
+            if Seq.isEmpty workSheetsAndName  then
+                failwith "no valid Test result"
+            else
+                logOk Local "Starting workSheet insert"
+                for workSheet, name in workSheetsAndName do
+                    logOk Local (sprintf "doing report %s" name)
+                    let wksData =
+                        { reportData with Name = name
+                                          WorkSheet = workSheet }
+                    createSheetWithLogAndTrack wksData |> ignore
+                reportData
 
         [<CustomOperation("exportReport")>]
         member __.Run(reportData : ReportData) = 
