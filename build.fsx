@@ -327,16 +327,15 @@ let isNullOrWhiteSpace = String.IsNullOrWhiteSpace
 
 // Workaround for https://github.com/fsharp/FAKE/issues/2242
 let pushPackage arguments =
-    let nugetCmd key = sprintf "nuget push -k %s -s nuget.org" key
+    let nugetCmd fileName key = sprintf "nuget push %s -k %s -s nuget.org" key fileName
     let key =
         match getBuildParam "nuget-key" with
         | s when not (isNullOrWhiteSpace s) -> s
         | _ -> UserInput.getUserPassword "NuGet Key: "
-    let fileName = IO.Directory.GetFiles(buildDir, "*.nupkg", SearchOption.TopDirectoryOnly) |> Seq.head
+    let fileName = IO.Directory.GetFiles(buildDir, "*.nupkg", SearchOption.TopDirectoryOnly) |> Seq.map Path.GetFileName |> Seq.head
     Trace.tracef "fileName %s" fileName
-    let cmd = nugetCmd key
-    runDotNet cmd buildDir
-
+    let cmd = nugetCmd fileName key
+    runDotNet cmd buildDir 
 Target.create "Push" (fun _ -> pushPackage [] )
 
 // Build order
