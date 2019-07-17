@@ -1,3 +1,5 @@
+### 0.9.0 - 17.07.2019
+* Put Domain in Juniper Namespace
 ### 0.8.0 - 17.07.2019
 * Fix Build Script again
 ### 0.7.0 - 17.07.2019

@@ -3,12 +3,11 @@ module JuniperTests
 open System
 open SpecificDomain.DomainIds
 open SpecificDomain.HeatPrognose
-open Domain
-open Domain.Logging
+open Juniper
+open Juniper.Logging
 open FileWriter
 open Ids
 open Expecto
-open Juniper
 open Thoth.Json.Net
 let reportInfo = 
     { ReportName = "Test"

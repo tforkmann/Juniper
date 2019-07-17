@@ -5,7 +5,6 @@ open Microsoft.Azure.WebJobs
 open FSharp.Core
 open Microsoft.WindowsAzure.Storage.Queue
 open Microsoft.Extensions.Logging
-open Domain
 open PostToQueue
 open GetTableEntry
 open CloudTable

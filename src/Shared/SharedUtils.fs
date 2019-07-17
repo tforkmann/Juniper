@@ -1,6 +1,5 @@
 module SharedUtils
-open Domain
-open Domain.Ids
+open Juniper.Logging
 open Juniper
 open System
 
@@ -10,7 +9,7 @@ let joinString (s : string []) = String.concat (";") (s)
 let createPartKey (latitude, longitude) = 
     (latitude |> string) + "-" + (longitude |> string)
 
-let getNiceDateString (sortableRowKey : SortableRowKey) =
+let getNiceDateString (sortableRowKey : Ids.SortableRowKey) =
     let date = sortableRowKey |> SortableRowKey.toDate
     date.ToString("dd.MM.yyyy HH:mm")
 

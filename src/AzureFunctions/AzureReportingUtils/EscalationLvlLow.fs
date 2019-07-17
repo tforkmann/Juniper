@@ -2,7 +2,7 @@ module EscalationLvlLow
 
 open Microsoft.Azure.WebJobs
 open Newtonsoft.Json
-open Domain
+open Juniper
 open System.Net.Mail
 open CreateBlob
 open FSharp.Control.Tasks.ContextInsensitive

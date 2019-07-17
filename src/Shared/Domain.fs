@@ -1,5 +1,4 @@
-module Domain
-
+namespace Juniper
 open OfficeOpenXml
 open System
 open Thoth.Json

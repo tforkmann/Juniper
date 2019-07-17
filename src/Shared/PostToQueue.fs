@@ -6,8 +6,8 @@ open Microsoft.WindowsAzure.Storage.Queue
 open CreateTable
 open TriggerNames
 open FileWriter
-open Domain
-open Logging
+open Juniper.Logging
+
 type AzureConnection = 
     | AzureConnection of string
     member this.Connect() =

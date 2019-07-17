@@ -1,8 +1,8 @@
 module ReportSheet
 
+open Juniper
 open ExcelUtils
-open Domain
-open Domain.Logging
+open Logging
 open FileWriter
 open FSharp.Control.Tasks.ContextInsensitive
 open SpecificDomain.HeatPrognose

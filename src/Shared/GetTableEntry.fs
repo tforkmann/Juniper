@@ -3,9 +3,6 @@ module GetTableEntry
 open Microsoft.WindowsAzure.Storage.Table
 open FSharp.Control.Tasks.ContextInsensitive
 open TableMappers
-open FileWriter
-open Domain
-open System
 let getAllLocations (table:CloudTable) = task {
     let rec getResults token = task {
         let! result = table.ExecuteQuerySegmentedAsync(TableQuery(), token)

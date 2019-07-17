@@ -2,8 +2,7 @@ module JuniperReports
 
 open System
 open Juniper
-open Domain
-open Domain.Logging
+open Juniper.Logging
 open FileWriter
 open Ids
 open Expecto

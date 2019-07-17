@@ -4,8 +4,7 @@ open Config
 open Microsoft.WindowsAzure.Storage
 open Microsoft.WindowsAzure.Storage.Table
 open System.Threading.Tasks
-open Domain
-open Domain.Logging
+open Juniper.Logging
 open FileWriter
 open System
 

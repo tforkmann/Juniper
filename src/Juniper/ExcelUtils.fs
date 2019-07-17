@@ -1,6 +1,6 @@
-module ExcelUtils
+namespace Juniper
 open System
-open Domain
+open Juniper
 open OfficeOpenXml
 open System.IO
 open CreateBlob
