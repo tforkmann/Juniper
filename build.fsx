@@ -327,7 +327,7 @@ let isNullOrWhiteSpace = String.IsNullOrWhiteSpace
 
 // Workaround for https://github.com/fsharp/FAKE/issues/2242
 let pushPackage arguments =
-    let nugetCmd fileName key = sprintf "nuget push %s -k %s -s nuget.org/" fileName key
+    let nugetCmd fileName key = sprintf "nuget push %s -k %s -s nuget.org" fileName key
     let key =
         match getBuildParam "nuget-key" with
         | s when not (isNullOrWhiteSpace s) -> s
