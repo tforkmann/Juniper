@@ -9,8 +9,8 @@ open FSharp.Control.Tasks.ContextInsensitive
 open System.Threading.Tasks
 let client = TelemetryClient ()
 
-let logPath = __SOURCE_DIRECTORY__ + @".\..\logs\"
-let logArchivPath = @".\..\..\..\..\logs\Archiv\"
+let logPath = Path.GetFullPath(Path.Combine(__SOURCE_DIRECTORY__, "logs"))
+let logArchivPath = @".\..\..\logs\Archiv\"
 let testPath = __SOURCE_DIRECTORY__ + @".\..\tests\"
 let miniLogFile (dt:DateTime) = 
     let year = dt.Year
@@ -40,10 +40,10 @@ let startAI ()=
     quickPulse.RegisterTelemetryProcessor processor
 
 let activateTSL () =
-    System.Net.ServicePointManager.SecurityProtocol <-
-        System.Net.ServicePointManager.SecurityProtocol |||
-          System.Net.SecurityProtocolType.Tls11 |||
-          System.Net.SecurityProtocolType.Tls12
+    Net.ServicePointManager.SecurityProtocol <-
+        Net.ServicePointManager.SecurityProtocol |||
+          Net.SecurityProtocolType.Tls11 |||
+          Net.SecurityProtocolType.Tls12
 
 let writeLog (status:Result<_,exn>) (logTxt:string) =
     let date = DateTime.Now
@@ -73,7 +73,7 @@ let writeLog (status:Result<_,exn>) (logTxt:string) =
         failwithf "Couldn't write LogFile: %s" exn.Message
 
 let moveOldLogFiles () = 
-
+    printfn "moving old log files"
     let destinationDirectory = Path.GetFullPath(logArchivPath)
     let sourceDirectoryRoot = Path.GetFullPath(logPath)
     let searchPattern = @"*.txt";

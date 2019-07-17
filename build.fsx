@@ -42,10 +42,7 @@ let clientPath = Path.getFullName "./src/Client"
 let deployDir = Path.getFullName "./deploy"
 let clientDeployPath = Path.combine clientPath "deploy"
 let release = ReleaseNotes.load "RELEASE_NOTES.md"
-let serverTestsPath = Path.getFullName "./test/ServerTests"
-let clientTestsPath = Path.getFullName "./test/UITests"
-let clientTestExecutables = "test/UITests/**/bin/**/*Tests*.exe"
-let nupkgDir = Path.getFullName "./nupkg"
+let unitTestsPath = Path.getFullName "./src/Juniper.Tests/"
 let templateName = "Juniper"
 
 let buildDir  = "./build/"
@@ -259,17 +256,21 @@ Target.create "Build" (fun _ ->
         DotNet.build id dir)
 )
 
+// Target.create "UnitTests" (fun _ ->
+//     DotNet.test (fun p ->
+//         { p with
+//             Configuration = configuration
+//             NoRestore = true
+//             NoBuild = true
+//             // TestAdapterPath = Some "."
+//             // Logger = Some "nunit;LogFilePath=../../TestResults.xml"
+//             // Current there is an issue with NUnit reporter, https://github.com/nunit/nunit3-vs-adapter/issues/589
+//         }
+//     ) "src/Juniper.Tests/Juniper.Tests.fsproj"
+// )
+
 Target.create "UnitTests" (fun _ ->
-    DotNet.test (fun p ->
-        { p with
-            Configuration = configuration
-            NoRestore = true
-            NoBuild = true
-            // TestAdapterPath = Some "."
-            // Logger = Some "nunit;LogFilePath=../../TestResults.xml"
-            // Current there is an issue with NUnit reporter, https://github.com/nunit/nunit3-vs-adapter/issues/589
-        }
-    ) "src/Juniper.Tests/Juniper.Tests.fsproj"
+    runDotNet "run" unitTestsPath
 )
 
 Target.create "PrepareRelease" (fun _ ->

@@ -2,7 +2,7 @@ module Domain
 
 open OfficeOpenXml
 open System
-open FSharp.Control.Tasks.ContextInsensitive
+open Thoth.Json
 open Expecto
 open System.Threading.Tasks
 
@@ -11,7 +11,7 @@ open System.Threading.Tasks
 
 [<AutoOpen>]
 module Domain = 
-    
+    printfn "opening Domain"
     type ReportIntervall =
         | Dayly
         | Weekly
@@ -39,7 +39,7 @@ module Domain =
           ReportTyp : string
           ReportID : Ids.ReportId }
 
-    type SheetData = obj
+    type SheetData = string
          
     type SheetInsert =
         { ExportedReport : XLSReport

@@ -16,7 +16,7 @@ group Juniper
     nuget Microsoft.ApplicationInsights.DependencyCollector
     nuget Microsoft.ApplicationInsights.PerfCounterCollector    
     nuget System.Configuration.ConfigurationManager
-
+    nuget Thoth.Json.Net
 group AzureFunctions
     
     source https://api.nuget.org/v3/index.json
@@ -43,4 +43,5 @@ group AzureFunctions
     nuget Expecto.TestResults
     nuget DurableFunctions.FSharp
     nuget System.Configuration.ConfigurationManager
+    nuget Thoth.Json.Net
 

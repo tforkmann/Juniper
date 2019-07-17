@@ -8,7 +8,7 @@ open CreateTable
 let mapLocation (entity : DynamicTableEntity) : Location =
     { LocationId = LocationId (entity.PartitionKey |> int)
       Name = entity.RowKey
-      PostalCode = getOptionalStringProperty "PostalCode" entity }
+      PostalCode = getStringProperty "PostalCode" entity }
 let mapWeatherData (entity : DynamicTableEntity) : WeatherData =
     { LocationId = LocationId (entity.PartitionKey |> int)
       Time = entity.RowKey

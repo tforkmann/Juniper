@@ -2,9 +2,13 @@ module ReportSheet
 
 open ExcelUtils
 open Domain
+open Domain.Logging
+open FileWriter
 open FSharp.Control.Tasks.ContextInsensitive
 open SpecificDomain.HeatPrognose
 open OfficeOpenXml
+open Thoth.Json.Net
+logOk Local "Open ReportSheets"
 ///ReportHeader
 let reportHeader (reportName : string) (measures : Measure []) (wks : ExcelWorksheet) =
     let timeFrom =
@@ -31,7 +35,7 @@ let reportHeader (reportName : string) (measures : Measure []) (wks : ExcelWorks
     wks.Cells.[4, 2].Value <- timeTo
 ///GET WORKSHEET
 let testSheet (sheet : SheetInsert option) =
-    printfn "blubb"
+    logOk Local "Starting TestSheet"
     task {
         match sheet with
         | Some sheetInsert ->
@@ -46,7 +50,11 @@ let testSheet (sheet : SheetInsert option) =
                 let measures =
                     match sheetInsert.ReportData with
                     | Some reportData -> 
-                        let data = reportData :?> DomainSheetData
+                        let data = 
+                            match Decode.fromString DomainSheetData.Decoder reportData with
+                            | Ok x -> x
+                            | _ -> failwith "Decoding failed"
+
                         data.Measures
                     | None -> [||]
                 // REPORT HEADER
@@ -60,11 +68,11 @@ let testSheet (sheet : SheetInsert option) =
                            testSheet.Cells.[startRow + i, 1].Value <- x.Time |> getNiceDateString
                            testSheet.Cells.[startRow + i, 2].Value <- x.Value
                            testSheet.Cells.[startRow + i, 3].Value <- x.UnitOfMeasure)
-                printfn "Generated %s %s" reportName (matchReportIntervall exportedReport.ReportIntervall)
+                logOk Local (sprintf "Generated %s %s" reportName (matchReportIntervall exportedReport.ReportIntervall))
             | None -> 
-                printfn "no excelPackage init"                    
+                logOk Local "no excelPackage init"                    
                 failwith "no excelPackage init"                    
         | None -> 
-            printfn "no SheetData"
+            logOk Local "no SheetData"
             failwith "no SheetData"
     }

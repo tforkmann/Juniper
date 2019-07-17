@@ -3,10 +3,13 @@ module JuniperReports
 open System
 open Juniper
 open Domain
+open Domain.Logging
+open FileWriter
 open Ids
 open Expecto
 open SpecificDomain.DomainIds
 open SpecificDomain.HeatPrognose
+open Thoth.Json.Net
 let reportInfo = 
     { ReportName = "Test"
       ReportTime = "Test"
@@ -16,7 +19,7 @@ let reportInfo =
 let testLocation =
     [|  { Name = "Test1"
           LocationId = LocationId 1
-          PostalCode = None }|]
+          PostalCode = "" }|]
 let locationValues = 
     [| 
         { Value = 0.
@@ -29,18 +32,22 @@ let locationValues =
           Time = DateTime.Now.AddYears(-1) }  |]
 
 let sheetData =
-    { Location = testLocation
+    { Locations = testLocation
       Measures = locationValues }      
 let testSheetInsert = 
     let excelPackage = startExcelApp ()
     { ExportedReport = reportInfo
-      ReportData = Some (sheetData  :> obj)
+      ReportData = 
+        logOk Local "Set SheetData"
+        let sheetData = DomainSheetData.Encoder sheetData |> Encode.toString 0
+        Some sheetData
       ExcelPackage = Some excelPackage }
 let testWorkSheets = 
-    printfn "testWorksheet"
+    logOk Local "testWorksheet"
     [ ReportSheet.testSheet, "TestWorksheet" ]
 
 let expectoTests (reportData:ReportData) =
+    logOk Local "expectoTests"
     let sheetInsert = 
         match reportData.SheetInsert with
         | Some sheetInsert -> sheetInsert
@@ -48,7 +55,10 @@ let expectoTests (reportData:ReportData) =
     let sumMeasures = 
         match sheetInsert.ReportData with
         | Some data -> 
-            let castedData = data :?> DomainSheetData
+            let castedData = 
+              match Decode.fromString DomainSheetData.Decoder data  with
+              | Ok x -> x
+              | _ -> failwith "decoding failed"
             castedData.Measures |> Array.sumBy (fun x -> x.Value)
         | None -> 0.
          

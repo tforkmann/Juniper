@@ -4,9 +4,12 @@ open System
 open SpecificDomain.DomainIds
 open SpecificDomain.HeatPrognose
 open Domain
+open Domain.Logging
+open FileWriter
 open Ids
 open Expecto
 open Juniper
+open Thoth.Json.Net
 let reportInfo = 
     { ReportName = "Test"
       ReportTime = "Test"
@@ -16,7 +19,7 @@ let reportInfo =
 let testLocation =
     [|  { Name = "Test1"
           LocationId = LocationId 1
-          PostalCode = None }|]
+          PostalCode = "" }|]
 let locationValues = 
     [| 
         { Value = 0.
@@ -29,26 +32,47 @@ let locationValues =
           Time = DateTime.Now.AddYears(-1) }  |]
 
 let sheetData =
-    { Location = testLocation
+    logOk Local "SheetData"
+    { Locations = testLocation
       Measures = locationValues }      
 let testSheetInsert = 
+    logOk Local "SheetInsert"
     let excelPackage = startExcelApp ()
     { ExportedReport = reportInfo
-      ReportData = Some (sheetData  :> obj)
+      ReportData = 
+        logOk Local "ReportData"
+        Some (
+            try 
+                DomainSheetData.Encoder sheetData |> Encode.toString 0 
+            with 
+            | exn -> 
+                logError exn Local "Couldn't cast to obj"
+                failwithf "Couldn't cast to obj")
       ExcelPackage = Some excelPackage }
 let testWorkSheets = 
-    printfn "testWorksheet"
+    logOk Local "Test Worksheet"
     [ ReportSheet.testSheet, "TestWorksheet" ]
 
 let expectoTests (reportData:ReportData) =
+    logOk Local "ExpectoTests"
     let sheetInsert = 
         match reportData.SheetInsert with
         | Some sheetInsert -> sheetInsert
-        | None -> failwith "no test possible"
+        | None -> 
+            logOk Local "No tst possible"
+            failwith "no test possible"
     let sumMeasures = 
         match sheetInsert.ReportData with
         | Some data ->
-            let domainSheetData = data :?> DomainSheetData
+            let domainSheetData = 
+                try 
+                    match Decode.fromString DomainSheetData.Decoder data  with
+                    | Ok x -> x
+                    | _ -> failwith "decoding failed"
+                with 
+                | exn -> 
+                    logError exn Local "Couldn't downcast to DomainShetData"
+                    failwithf "Couldn't downcast to DomainShetData"          
             domainSheetData.Measures |> Array.sumBy (fun x -> x.Value)
         | None -> 0.
          
@@ -57,17 +81,17 @@ let expectoTests (reportData:ReportData) =
             <| fun () -> Expect.isGreaterThanOrEqual sumMeasures 0. "SumData should be bigger than or equal"]
 
 let testReport =
-    // try 
-    report {
-        sheetInsert testSheetInsert
-        testReportData expectoTests
-        worksheetList testWorkSheets
-        logSuccess "Finished QuarterlyReportExternal"
-    }
-    // with exn ->
-    //     let msg =
-    //         sprintf "Can't excecute Async ReportBuilding. %sMessage: %s.%sInnerMessage: %s" Environment.NewLine exn.Message Environment.NewLine
-    //             exn.InnerException.Message
-    //     logError exn msg
-    //     printfn "%s" msg
-    //     failwith msg
+    try 
+        report {
+            // sheetInsert testSheetInsert
+            // testReportData expectoTests
+            // worksheetList testWorkSheets
+            logSuccess "Finished QuarterlyReportExternal"
+        }
+    with exn ->
+        let msg =
+            sprintf "Can't excecute Async ReportBuilding. %sMessage: %s.%sInnerMessage: %s" Environment.NewLine exn.Message Environment.NewLine
+                exn.InnerException.Message
+        logError exn Local msg
+        printfn "%s" msg
+        failwith msg

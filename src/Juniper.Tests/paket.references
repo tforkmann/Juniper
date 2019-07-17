@@ -12,3 +12,4 @@ group Juniper
     Microsoft.ApplicationInsights
     Microsoft.ApplicationInsights.DependencyCollector
     Microsoft.ApplicationInsights.PerfCounterCollector    
+    Thoth.Json.Net

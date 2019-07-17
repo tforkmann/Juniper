@@ -19,3 +19,4 @@ group AzureFunctions
     Expecto.TestResults
     DurableFunctions.FSharp
     System.Configuration.ConfigurationManager
+    Thoth.Json.Net
