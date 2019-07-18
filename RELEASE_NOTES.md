@@ -1,3 +1,5 @@
+### 0.10.0 - 17.07.2019
+* Update domain
 ### 0.9.0 - 17.07.2019
 * Put Domain in Juniper Namespace
 ### 0.8.0 - 17.07.2019

@@ -1,7 +1,6 @@
 namespace Juniper
 open OfficeOpenXml
 open System
-open Thoth.Json
 open Expecto
 open System.Threading.Tasks
 
@@ -36,7 +35,7 @@ module Domain =
           ReportTime : string
           ReportIntervall : ReportIntervall
           ReportTyp : string
-          ReportID : Ids.ReportId }
+          ReportId : Ids.ReportId }
 
     type SheetData = string
          

@@ -90,20 +90,3 @@ module SpecificDomain
                     (fun get ->
                     { Locations = get.Required.Field "Locations" (Decode.array Location.Decoder)
                       Measures = get.Required.Field "Locations" (Decode.array Measure.Decoder) })
-
-// module SheetData =
-    //     open Juniper
-    //     open Domain
-    //     type SheetData with
-    //         member x.Print() = Variant.print x
-    //     /// **Description**
-    //     ///     Validation map operator
-    //     let (<!>) f x = map f x
-
-    //     /// **Description**
-    //     ///     Validation apply operator
-    //     let (<*>) f x = apply f x
-
-    //     /// **Description**
-    //     ///     Validation bind operator
-    //     let (>>=) x f = bind f x
