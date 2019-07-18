@@ -1,3 +1,5 @@
+### 0.10.4 - 18.07.2019
+* Build didn't updated
 ### 0.10.3 - 18.07.2019
 * Add example to readme
 ### 0.10.2 - 18.07.2019

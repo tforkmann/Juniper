@@ -313,7 +313,7 @@ Target.create "Pack" (fun _ ->
         
         DotNet.pack (fun p ->
             { p with
-                  NoBuild = true
+                  NoBuild = false
                   Configuration = configuration
                   OutputPath = Some "build"
                   MSBuildParams = args
