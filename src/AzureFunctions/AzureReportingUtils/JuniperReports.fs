@@ -36,7 +36,7 @@ let sheetData =
 let testSheetInsert = 
     let excelPackage = startExcelApp ()
     { ExportedReport = reportInfo
-      ReportData = 
+      SheetData = 
         logOk Local "Set SheetData"
         let sheetData = DomainSheetData.Encoder sheetData |> Encode.toString 0
         Some sheetData
@@ -52,7 +52,7 @@ let expectoTests (reportData:ReportData) =
         | Some sheetInsert -> sheetInsert
         | None -> failwith "no test possible"
     let sumMeasures = 
-        match sheetInsert.ReportData with
+        match sheetInsert.SheetData with
         | Some data -> 
             let castedData = 
               match Decode.fromString DomainSheetData.Decoder data  with

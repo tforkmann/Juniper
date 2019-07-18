@@ -39,7 +39,7 @@ let testSheetInsert =
     let excelPackage = startExcelApp ()
     let sheetInsert =
         { ExportedReport = reportInfo
-          ReportData = 
+          SheetData = 
             logOk Local "ReportData"
             Some (
                 try 
@@ -71,7 +71,7 @@ let expectoTests (reportData:ReportData) =
             logOk Local "No tst possible"
             failwith "no test possible"
     let sumMeasures = 
-        match sheetInsert.ReportData with
+        match sheetInsert.SheetData with
         | Some data ->
             let domainSheetData = 
                 try 

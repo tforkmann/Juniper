@@ -40,7 +40,7 @@ module Domain =
     type SheetInsert =
         { ExportedReport : XLSReport
           ExcelPackage : ExcelPackage option
-          ReportData : string option }
+          SheetData : string option }
 
     type ReportData =
         { WorkSheet : SheetInsert option -> Task<Unit>

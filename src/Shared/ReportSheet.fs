@@ -48,7 +48,7 @@ let testSheet (sheet : SheetInsert option) =
                 let testSheet = wks.Add reportName
 
                 let measures =
-                    match sheetInsert.ReportData with
+                    match sheetInsert.SheetData with
                     | Some reportData -> 
                         let data = 
                             match Decode.fromString DomainSheetData.Decoder reportData with
