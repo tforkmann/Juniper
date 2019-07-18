@@ -8,7 +8,6 @@ To create you own specific domain have to convert your domain sheet data to a st
 
 Here is an example how to implement your Encoder and Decoder in your specific domain:
 
-´´´fsharp
     open Thoth.Json.Net
     open System
     module DomainIds =
@@ -100,4 +99,3 @@ Here is an example how to implement your Encoder and Decoder in your specific do
                     (fun get ->
                     { Locations = get.Required.Field "Locations" (Decode.array Location.Decoder)
                       Measures = get.Required.Field "Locations" (Decode.array Measure.Decoder) })
-´´´
