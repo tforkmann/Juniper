@@ -17,4 +17,3 @@ let matchTimeFrameToCRON (intervall:ReportIntervall) =
     match intervall with
     | Dayly -> "0 0 0 * * *"
     | _ -> failwith "not match"
-

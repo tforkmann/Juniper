@@ -14,7 +14,8 @@ let reportInfo =
       ReportTime = "Test"
       ReportIntervall = Monthly
       ReportTyp = "Test"
-      ReportId = ReportId 1 }
+      ReportId = ReportId 1
+      ReportDir = SpecificDomain.reportDir }
 let testLocation =
     [|  { Name = "Test1"
           LocationId = LocationId 1
@@ -40,7 +41,7 @@ let testSheetInsert =
         logOk Local "Set SheetData"
         let sheetData = DomainSheetData.Encoder sheetData |> Encode.toString 0
         Some sheetData
-      ExcelPackage = Some excelPackage }
+      ExcelPackage = excelPackage }
 let testWorkSheets = 
     logOk Local "testWorksheet"
     [ ReportSheet.testSheet, "TestWorksheet" ]

@@ -14,7 +14,8 @@ let reportInfo =
       ReportTime = "Test"
       ReportIntervall = Monthly
       ReportTyp = "Test"
-      ReportId = ReportId 1 }
+      ReportId = ReportId 1
+      ReportDir = SpecificDomain.reportDir }
 let testLocation =
     [|  { Name = "Test1"
           LocationId = LocationId 1
@@ -49,13 +50,12 @@ let testSheetInsert =
                     logError exn Local "Couldn't cast to obj"
                     failwithf "Couldn't cast to obj")
 
-          ExcelPackage = Some excelPackage }
+          ExcelPackage = excelPackage }
     logOk Local (sprintf "SheetInsert %A" sheetInsert)
     sheetInsert
-let testWorkSheets () = 
+let testWorkSheets = 
     try
         logOk Local "Test Worksheet"
-        // logOk Local (sprintf "SheetInsert %A" sheetInsert)
         [ ReportSheet.testSheet, "TestWorksheet" ]
     with    
     | exn -> 
@@ -68,7 +68,7 @@ let expectoTests (reportData:ReportData) =
         match reportData.SheetInsert with
         | Some sheetInsert -> sheetInsert
         | None -> 
-            logOk Local "No tst possible"
+            logOk Local "No test possible"
             failwith "no test possible"
     let sumMeasures = 
         match sheetInsert.SheetData with
@@ -77,7 +77,7 @@ let expectoTests (reportData:ReportData) =
                 try 
                     match Decode.fromString DomainSheetData.Decoder data  with
                     | Ok x -> x
-                    | _ -> failwith "decoding failed"
+                    | Error exn -> failwithf "decoding failed %A" exn
                 with 
                 | exn -> 
                     logError exn Local "Couldn't downcast to DomainShetData"
@@ -88,16 +88,3 @@ let expectoTests (reportData:ReportData) =
     testList "Test if Sum of measures is not out of scope"
        [ testCase "Test Sum of measures is bigger or equal 0."
             <| fun () -> Expect.isGreaterThanOrEqual sumMeasures 0. "SumData should be bigger than or equal"]
-
-let testReport =
-    try 
-        report {
-            sheetInsert testSheetInsert
-            // testReportData expectoTests
-            // worksheetList testWorkSheets
-            // logSuccess "Finished QuarterlyReportExternal"
-        }
-    with exn ->
-        let msg = sprintf "Can't excecute Async ReportBuilding. %s" exn.Message
-        logError exn Local msg
-        failwith msg

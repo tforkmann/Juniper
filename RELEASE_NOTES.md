@@ -1,3 +1,5 @@
+### 0.11.0 - 18.07.2019
+* make Juniper a library - now status early access
 ### 0.10.6 - 18.07.2019
 * clean up build script
 ### 0.10.5 - 18.07.2019

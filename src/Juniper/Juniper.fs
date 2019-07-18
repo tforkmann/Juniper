@@ -28,13 +28,11 @@ module ReportPipeline =
             logOk Local msgStr
             printLogFileTotalTime stopWatch msgStr ()
         }
+    
+    let zeroWorkSheet _ =
+        task { () }
 
-    let zeroWorkSheet _ = 
-        task {
-            ()
-        }
     let zero =
-        logOk Local "Zero"
         { WorkSheet = zeroWorkSheet
           Name = ""
           LogMsg = ""
@@ -44,40 +42,57 @@ module ReportPipeline =
           TestSuccess = false }
 
     let resultPath testName = testPath + (sprintf "TestResults_%s.xml" testName)
-    let writeResults testName = TestResults.writeNUnitSummary (resultPath testName, "Expecto.Tests")
-    let getConfig testName = defaultConfig.appendSummaryHandler (writeResults testName)
+    let writeResults testName =
+        TestResults.writeNUnitSummary (resultPath testName, "Expecto.Tests")
+    let getConfig testName =
+        defaultConfig.appendSummaryHandler (writeResults testName)
 
 [<AutoOpen>]
 module Report =
-    type Juniper() =
-        member __.Yield(_) = 
-            logOk Local "Yield Zero"
+
+    type Juniper internal () =
+
+        member __.Yield(_) =
             zero
-        member __.Bind(m, f) = 
-            logOk Local "Bind"
+
+        member __.Bind(m, f) =
             m |> List.collect f
-        member __.Combine (a, b) = 
-            logOk Local "Combine"
-            a || b ()
-        member __.Delay(f) = 
-            logOk Local "Delay"
+
+        member __.Combine(a, b) =
+            a || b()
+
+        member __.Delay(f) =
             f()
-        member __.For(m,f) =
-            printfn "For %A" m
-            __.Bind(m,f)    
+
+        [<CustomOperation("worksheetList")>]
+        member __.WorkSheet(reportData, workSheetsAndName) =
+            logOk Local "Starting workSheet insert"
+            for workSheet, name in workSheetsAndName do
+                logOk Local (sprintf "doing report %s" name)
+                let wksData =
+                    { reportData with Name = name
+                                      WorkSheet = workSheet }
+                createSheetWithLogAndTrack wksData |> ignore
+            reportData
+
+        [<CustomOperation("exportReport")>]
+        member __.Run(reportData : ReportData) =
+            logOk Local "Starting ExportReport"
+            exportReport reportData.SheetInsert
 
         [<CustomOperation("sheetInsert")>]
-        member __.SheetInsert(reportData, sheetInsert) = 
-            logOk Local "Doing something"
-            logOk Local (sprintf "doing SheetInsert reportData %A sheetInsert %A" reportData sheetInsert)
-            { reportData with SheetInsert = Some sheetInsert}
+        member __.SheetInsert(reportData, sheetInsert) =
+            logOk Local
+                (sprintf "doing SheetInsert reportData %A sheetInsert %A"
+                     reportData sheetInsert)
+            { reportData with SheetInsert = Some sheetInsert }
+
         [<CustomOperation("testReportData")>]
         member __.TestReportData(reportData, (expectoTest : ReportData -> Test)) =
             logOk Local "TestReportData"
-            let test = {
-                Test = expectoTest reportData
-                Name = "Juniper Test"
-            }
+            let test =
+                { Test = expectoTest reportData
+                  Name = "Juniper Test" }
             logOk Local "Starting ReportData Tests"
             let config = getConfig test.Name
             let result = test.Test |> runTests config
@@ -86,30 +101,11 @@ module Report =
                                   | 0 -> true
                                   | 1 -> false
                                   | _ -> failwith "no valid Test result" }
-        [<CustomOperation("worksheetList")>]
-        member __.WorkSheet(reportData, workSheetsAndName) =
-            if Seq.isEmpty workSheetsAndName  then
-                failwith "no valid Test result"
-            else
-                logOk Local "Starting workSheet insert"
-                for workSheet, name in workSheetsAndName do
-                    logOk Local (sprintf "doing report %s" name)
-                    let wksData =
-                        { reportData with Name = name
-                                          WorkSheet = workSheet }
-                    createSheetWithLogAndTrack wksData |> ignore
-                reportData
-
-        [<CustomOperation("exportReport")>]
-        member __.Run(reportData : ReportData) = 
-            logOk Local "Starting ExportReport"
-            exportReport reportData.SheetInsert
 
         [<CustomOperation("logSuccess")>]
         member __.Log(reportData, msg) =
             logOk Local msg
             { reportData with ReportData.LogMsg = msg }
 
-    let report = 
-        logOk Local "Starting Juniper"
+    let report =
         Juniper()

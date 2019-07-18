@@ -35,12 +35,11 @@ module Domain =
           ReportTime : string
           ReportIntervall : ReportIntervall
           ReportTyp : string
-          ReportId : Ids.ReportId
-          ReportDir : string }
+          ReportId : Ids.ReportId }
          
     type SheetInsert =
         { ExportedReport : XLSReport
-          ExcelPackage : ExcelPackage
+          ExcelPackage : ExcelPackage option
           SheetData : string option }
 
     type ReportData =

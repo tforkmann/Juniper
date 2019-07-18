@@ -1,6 +1,7 @@
 module SpecificDomain
     open Thoth.Json.Net
     open System
+    let reportDir = @".\..\..\reports"
     module DomainIds =
         type LocationId =
         | LocationId of locationId : int
@@ -66,10 +67,10 @@ module SpecificDomain
             static member Decoder =
                 Decode.object
                     (fun get ->
-                    { Value = get.Required.Field "Name" Decode.float
-                      Description = get.Required.Field "Name" Decode.string
-                      UnitOfMeasure = get.Required.Field "Name" Decode.string
-                      Time = get.Required.Field "Name" Decode.datetime })
+                    { Value = get.Required.Field "Value" Decode.float
+                      Description = get.Required.Field "Description" Decode.string
+                      UnitOfMeasure = get.Required.Field "UnitOfMeasure" Decode.string
+                      Time = get.Required.Field "Time" Decode.datetime })
 
 
         type DomainSheetData =
@@ -89,4 +90,4 @@ module SpecificDomain
                 Decode.object
                     (fun get ->
                     { Locations = get.Required.Field "Locations" (Decode.array Location.Decoder)
-                      Measures = get.Required.Field "Locations" (Decode.array Measure.Decoder) })
+                      Measures = get.Required.Field "Measures" (Decode.array Measure.Decoder) })

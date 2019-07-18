@@ -7,18 +7,15 @@ open JuniperTests
 
 let testReport = 
     report {
-        printfn "Starting Tests"  
         sheetInsert testSheetInsert
         testReportData expectoTests
-        // worksheetList testWorkSheets
+        worksheetList testWorkSheets
         logSuccess "Finished QuarterlyReportExternal"
     }
 
 [<Tests>]
 let tests =
   printfn "Starting Tests"  
-  testList "Basic tests" [
-    testTask "Report should be executed" {
+  testTask "Report should be executed" {
        do! testReport     
     }
-    ]

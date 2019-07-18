@@ -10,7 +10,7 @@ let client = TelemetryClient ()
 
 let logPath =  @".\..\..\logs\"
 let logArchivPath = @".\..\..\logs\Archiv\"
-let testPath = __SOURCE_DIRECTORY__ + @".\..\tests\"
+let testPath = __SOURCE_DIRECTORY__ + @".\..\..\tests\"
 let miniLogFile (dt:DateTime) = 
     let year = dt.Year
     let day = dt.Day

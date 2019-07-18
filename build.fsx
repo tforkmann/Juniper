@@ -315,7 +315,7 @@ Target.create "Push" (fun _ -> pushPackage [] )
 // Build order
 "Clean"
     ==> "Build"
-    // ==> "UnitTests"
+    ==> "UnitTests"
     ==> "PrepareRelease"
     ==> "Pack"
     ==> "Push"
