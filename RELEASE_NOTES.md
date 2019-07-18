@@ -1,3 +1,5 @@
+### 0.10.3 - 18.07.2019
+* Add example to readme
 ### 0.10.2 - 18.07.2019
 * Fix type doublication
 ### 0.10.1 - 18.07.2019
