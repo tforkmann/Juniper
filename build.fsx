@@ -35,18 +35,11 @@ open Fake.Tools
 // Information about the project to be used at NuGet and in AssemblyInfo files
 // --------------------------------------------------------------------------------------
 
-let servicePath = Path.getFullName "./src/AzureUpload"  
-
-let serverPath = Path.getFullName "./src/Server"
-let clientPath = Path.getFullName "./src/Client"
 let deployDir = Path.getFullName "./deploy"
-let clientDeployPath = Path.combine clientPath "deploy"
 let release = ReleaseNotes.load "RELEASE_NOTES.md"
 let unitTestsPath = Path.getFullName "./src/Juniper.Tests/"
-let templateName = "Juniper"
 
 let buildDir  = "./build/"
-
 
 // Git configuration (used for publishing documentation in gh-pages branch)
 // The profile where the project is posted
@@ -94,10 +87,6 @@ let platformTool tool winTool =
         failwith errorMsg
 
 
-let nodeTool = platformTool "node" "node.exe"
-let yarnTool = platformTool "yarn" "yarn.cmd"
-let npmTool = platformTool "npm" "npm.cmd"
-
 // --------------------------------------------------------------------------------------
 // Standard DotNet Build Steps
 // --------------------------------------------------------------------------------------
@@ -106,11 +95,9 @@ let inline withWorkDir wd =
     DotNet.Options.lift install.Value
     >> DotNet.Options.withWorkingDirectory wd
 
-let mutable dotnetExePath = "dotnet"
-
 let runTool cmd args workingDir =
     let arguments = args |> String.split ' ' |> Arguments.OfArgs
-    Command.RawCommand (cmd, arguments)
+    RawCommand (cmd, arguments)
     |> CreateProcess.fromCommand
     |> CreateProcess.withWorkingDirectory workingDir
     |> CreateProcess.ensureExitCode
@@ -256,19 +243,6 @@ Target.create "Build" (fun _ ->
         DotNet.build id dir)
 )
 
-// Target.create "UnitTests" (fun _ ->
-//     DotNet.test (fun p ->
-//         { p with
-//             Configuration = configuration
-//             NoRestore = true
-//             NoBuild = true
-//             // TestAdapterPath = Some "."
-//             // Logger = Some "nunit;LogFilePath=../../TestResults.xml"
-//             // Current there is an issue with NUnit reporter, https://github.com/nunit/nunit3-vs-adapter/issues/589
-//         }
-//     ) "src/Juniper.Tests/Juniper.Tests.fsproj"
-// )
-
 Target.create "UnitTests" (fun _ ->
     runDotNet "run" unitTestsPath
 )
@@ -326,7 +300,7 @@ let getBuildParam = Environment.environVar
 let isNullOrWhiteSpace = String.IsNullOrWhiteSpace
 
 // Workaround for https://github.com/fsharp/FAKE/issues/2242
-let pushPackage arguments =
+let pushPackage _ =
     let nugetCmd fileName key = sprintf "nuget push %s -k %s -s nuget.org" fileName key
     let key =
         match getBuildParam "nuget-key" with
@@ -346,5 +320,4 @@ Target.create "Push" (fun _ -> pushPackage [] )
     ==> "Pack"
     ==> "Push"
 
-// start build
 Target.runOrDefault "Build"
