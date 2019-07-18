@@ -1,3 +1,5 @@
+### 0.10.1 - 18.07.2019
+* Make ReportData a optional string
 ### 0.10.0 - 17.07.2019
 * Update domain
 ### 0.9.0 - 17.07.2019
@@ -14,7 +16,6 @@
 * Implement Thoth.Json.Net
 ### 0.3.0 - 12.07.2019
 * Update build script
-
 ### 0.2.0 - 12.07.2019
 * Make Juniper type inspecific
 

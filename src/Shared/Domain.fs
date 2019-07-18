@@ -36,13 +36,11 @@ module Domain =
           ReportIntervall : ReportIntervall
           ReportTyp : string
           ReportId : Ids.ReportId }
-
-    type SheetData = string
          
     type SheetInsert =
         { ExportedReport : XLSReport
           ExcelPackage : ExcelPackage option
-          ReportData : SheetData option }
+          ReportData : string option }
 
     type ReportData =
         { WorkSheet : SheetInsert option -> Task<Unit>
