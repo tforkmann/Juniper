@@ -1,5 +1,7 @@
 # Juniper
 
+[![NuGet version](https://badge.fury.io/nu/Juniper.svg)](https://badge.fury.io/nu/Juniper)
+
 Juniper is a high level computation expression on top of the EPPlus excel package. It includes Expecto test before building the excel report sheets.
 
 # Create specific domain using Thoth.Json.Net
