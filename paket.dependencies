@@ -3,7 +3,6 @@ group Juniper
     source https://api.nuget.org/v3/index.json
     nuget FSharp.Core
     nuget EPPlus
-    nuget SqlProvider
     nuget FSharp.Data
     nuget Expecto
     nuget Expecto.BenchmarkDotNet
@@ -17,6 +16,9 @@ group Juniper
     nuget Microsoft.ApplicationInsights.PerfCounterCollector    
     nuget System.Configuration.ConfigurationManager
     nuget Thoth.Json.Net
+    nuget Chia 
+    nuget System.Drawing.Common 4.6.0-rc1.19456.4
+
 group AzureFunctions
     
     source https://api.nuget.org/v3/index.json
@@ -44,4 +46,5 @@ group AzureFunctions
     nuget DurableFunctions.FSharp
     nuget System.Configuration.ConfigurationManager
     nuget Thoth.Json.Net
-
+    nuget Chia
+    nuget System.Drawing.Common 4.6.0-rc1.19456.4

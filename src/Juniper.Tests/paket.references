@@ -1,7 +1,6 @@
 group Juniper
     EPPlus
     FSharp.Data
-    SqlProvider
     Expecto
     Expecto.BenchmarkDotNet
     Expecto.FsCheck

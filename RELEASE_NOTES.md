@@ -1,3 +1,5 @@
+### 0.12.0 - 18.8.2019
+* Implementing Chia
 ### 0.11.0 - 18.07.2019
 * make Juniper a library - now status early access
 ### 0.10.6 - 18.07.2019

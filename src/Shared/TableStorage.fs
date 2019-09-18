@@ -2,7 +2,7 @@ module TableStorage
 
 open Microsoft.WindowsAzure.Storage.Table
 open FSharp.Control.Tasks.ContextInsensitive
-open Juniper.Logging
+open Chia.Domain.Logging
 open FileWriter
 open CreateTable
 open SpecificDomain.HeatPrognose

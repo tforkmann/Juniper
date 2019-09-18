@@ -2,7 +2,7 @@ namespace Juniper
 
 open FSharp.Control.Tasks.ContextInsensitive
 open Domain
-open Logging
+open Chia.Domain.Logging
 open ExcelUtils
 open FileWriter
 open OfficeOpenXml

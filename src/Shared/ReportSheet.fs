@@ -2,12 +2,13 @@ module ReportSheet
 
 open Juniper
 open ExcelUtils
-open Logging
+open Chia.Domain.Logging
 open FileWriter
 open FSharp.Control.Tasks.ContextInsensitive
 open SpecificDomain.HeatPrognose
 open OfficeOpenXml
 open Thoth.Json.Net
+open Chia.TimeCalculation
 logOk Local "Open ReportSheets"
 ///ReportHeader
 let reportHeader (reportName : string) (measures : Measure []) (wks : ExcelWorksheet) =

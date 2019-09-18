@@ -1,7 +1,6 @@
 group Juniper
     EPPlus
     FSharp.Data
-    SqlProvider
     Expecto
     Expecto.BenchmarkDotNet
     Expecto.FsCheck
@@ -15,3 +14,4 @@ group Juniper
     Microsoft.ApplicationInsights.PerfCounterCollector    
     System.Configuration.ConfigurationManager
     Thoth.Json.Net
+    Chia

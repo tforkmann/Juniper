@@ -3,6 +3,7 @@ open OfficeOpenXml
 open System
 open Expecto
 open System.Threading.Tasks
+open Chia
 
 /// Add your Domain types
 
@@ -10,20 +11,8 @@ open System.Threading.Tasks
 [<AutoOpen>]
 module Domain = 
     printfn "opening Domain"
-    type ReportIntervall =
-        | Dayly
-        | Weekly
-        | Monthly
-        | Quarterly
-        | Halfyearly
-        | Yearly
     
     module Ids =
-        type ReportId =
-            | ReportId of reportId : int
-            member this.GetValue = (fun (ReportId id) -> id) this
-            member this.GetValueAsString = (fun (ReportId id) -> string id) this
-
 
         type SortableRowKey =
             | SortableRowKey of string
@@ -35,11 +24,12 @@ module Domain =
           ReportTime : string
           ReportIntervall : ReportIntervall
           ReportTyp : string
-          ReportId : Ids.ReportId }
+          ReportId : Ids.ReportId
+          ReportDir : string }
          
     type SheetInsert =
         { ExportedReport : XLSReport
-          ExcelPackage : ExcelPackage option
+          ExcelPackage : ExcelPackage
           SheetData : string option }
 
     type ReportData =

@@ -4,7 +4,9 @@ open System
 open SpecificDomain.DomainIds
 open SpecificDomain.HeatPrognose
 open Juniper
-open Juniper.Logging
+open Chia.Domain.Ids
+open Chia.Domain.Time
+open Chia.Domain.Logging
 open FileWriter
 open Ids
 open Expecto

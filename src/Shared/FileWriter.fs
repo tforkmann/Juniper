@@ -2,7 +2,7 @@ module FileWriter
 
 open System
 open System.IO
-open Juniper.Logging
+open Chia.Domain.Logging
 open Microsoft.ApplicationInsights
 open FSharp.Control.Tasks.ContextInsensitive
 open System.Threading.Tasks

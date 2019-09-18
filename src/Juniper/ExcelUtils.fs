@@ -25,15 +25,6 @@ module ExcelUtils =
     let insertValues startRow startCol (worksheet : ExcelWorksheet) (array : obj [] []) =
         array |> Array.Parallel.iteri (fun i x -> x |> Array.Parallel.iteri (fun j y -> worksheet.Cells.[startRow + i, startCol + j].Value <- y))
 
-    let matchReportIntervall (intervall : ReportIntervall) =
-        match intervall with
-        | Dayly -> "dayly"
-        | Weekly -> "weekly"
-        | Monthly -> "monthly"
-        | Quarterly -> "quarterly"
-        | Halfyearly -> "halfyearly"
-        | Yearly -> "yearly"
-
     let exportReport (sheet : SheetInsert option) =
         task {
             match sheet with

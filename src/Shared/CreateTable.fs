@@ -4,15 +4,10 @@ open Config
 open Microsoft.WindowsAzure.Storage
 open Microsoft.WindowsAzure.Storage.Table
 open System.Threading.Tasks
-open Juniper.Logging
+open Chia.Domain.Logging
 open FileWriter
 open System
-
-type AzureConnection = 
-    | AzureConnection of string
-    member this.Connect() =
-        match this with
-        | AzureConnection connectionString -> CloudStorageAccount.Parse connectionString
+open Chia.CreateTable
 
 let deleteTable isLocal tableName (connection: CloudStorageAccount) =
     printfn "Try to Delete %s" tableName

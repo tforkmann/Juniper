@@ -6,7 +6,7 @@ open Microsoft.WindowsAzure.Storage.Queue
 open CreateTable
 open TriggerNames
 open FileWriter
-open Juniper.Logging
+open Chia.Domain.Logging
 
 type AzureConnection = 
     | AzureConnection of string

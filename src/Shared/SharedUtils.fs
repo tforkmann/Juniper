@@ -1,8 +1,6 @@
 module SharedUtils
-open Juniper.Logging
+open Chia.Domain.Time
 open Juniper
-open System
-
 
 let joinString (s : string []) = String.concat (";") (s)
 
