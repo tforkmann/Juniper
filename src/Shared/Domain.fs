@@ -5,6 +5,7 @@ open Expecto
 open System.Threading.Tasks
 open Chia.Domain.Time
 open Chia.Domain.Ids
+open Chia.FileWriter
 
 
 /// Add your Domain types
@@ -41,7 +42,8 @@ module Domain =
           ExportMsg : string
           BuildMsg : string
           TestSuccess : bool
-          SheetInsert : SheetInsert option }
+          SheetInsert : SheetInsert option
+          FileWriterInfo : FileWriterInfo option }
 
     type TestInfo =
         { Test : Test

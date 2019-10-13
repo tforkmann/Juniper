@@ -4,13 +4,13 @@ open Microsoft.Azure.WebJobs
 open Newtonsoft.Json
 open Juniper
 open System.Net.Mail
-open CreateBlob
 open FSharp.Control.Tasks.ContextInsensitive
 open System.IO
 open System.Net.Mime
 open Microsoft.Extensions.Logging
 open TriggerNames
 open Escalation
+open CloudTable.BlobConfig
 
 let server = "mail.addresse.something"
 let user = "escalation@domain.something"

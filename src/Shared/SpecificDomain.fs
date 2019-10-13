@@ -1,7 +1,17 @@
 module SpecificDomain
     open Thoth.Json.Net
     open System
+    open Chia.Domain.Config
+    open Chia.Domain.Logging
+    open Chia.FileWriter
+
     let reportDir = @".\..\..\reports"
+
+    module Config =
+        let fileWriterInfo = initFileWriter Development "JuniperTest" Local
+        let fileWriterInfoAzure = initFileWriter Development "JuniperTest" Azure
+
+
     module DomainIds =
         type LocationId =
         | LocationId of locationId : int
@@ -52,7 +62,7 @@ module SpecificDomain
                       Visibility = get.Required.Field "Visibility" Decode.float
                       IsFaulty = get.Required.Field "IsFaulty" Decode.bool })
 
-                               
+
         type Measure =
             { Value : float
               Description : string

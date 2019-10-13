@@ -8,9 +8,6 @@
   <ItemGroup>
     <Compile Include="../Shared/Domain.fs" />
     <Compile Include="../Shared/Config.fs" />
-    <Compile Include="../Shared/FileWriter.fs" />
-    <Compile Include="../Shared/BlobNames.fs" />
-    <Compile Include="../Shared/CreateBlob.fs" />
     <Compile Include="ExcelUtils.fs" />
     <Compile Include="Juniper.fs" />
   </ItemGroup>

@@ -2,33 +2,37 @@ namespace Juniper
 
 open FSharp.Control.Tasks.ContextInsensitive
 open Domain
-open Chia.Domain.Logging
 open ExcelUtils
-open FileWriter
 open OfficeOpenXml
 open System.IO
 open Expecto
+open Chia.FileWriter
 
 [<AutoOpen>]
 module ReportPipeline =
     ///Function to start an ExcelApplication
-    let startExcelApp() =
-        logOk Local "Start ExcelApp"
+    let startExcelApp (fileWriterInfo:FileWriterInfo) () =
+        logOk fileWriterInfo "Start ExcelApp"
         let memoryStream = new MemoryStream()
         let xlspackage = new ExcelPackage(memoryStream)
         xlspackage
 
     let createSheetWithLogAndTrack (reportData : ReportData) =
-        logOk Local "Start CreateSheetWithLogAndTrack"
-        task {
-            let stopWatch = System.Diagnostics.Stopwatch.StartNew()
-            Async.Sleep 5000 |> ignore
-            do! reportData.WorkSheet reportData.SheetInsert
-            let msgStr = sprintf "Created %s Sheet" reportData.Name
-            logOk Local msgStr
-            printLogFileTotalTime stopWatch msgStr ()
-        }
-    
+        match reportData.FileWriterInfo with
+        | Some fileWriterInfo ->
+            logOk fileWriterInfo "Start CreateSheetWithLogAndTrack"
+            task {
+                let stopWatch = System.Diagnostics.Stopwatch.StartNew()
+                Async.Sleep 5000 |> ignore
+                do! reportData.WorkSheet reportData.SheetInsert
+                let msgStr = sprintf "Created %s Sheet" reportData.Name
+                logOk fileWriterInfo msgStr
+                printLogFileTotalTime stopWatch msgStr fileWriterInfo ()
+            }
+        | None ->
+            printfn "Can't start Juniper - please init FileWriter info first"
+            failwithf "Can't start Juniper - please init FileWriter info first"
+
     let zeroWorkSheet _ =
         task { () }
 
@@ -39,13 +43,14 @@ module ReportPipeline =
           BuildMsg = ""
           ExportMsg = ""
           SheetInsert = None
-          TestSuccess = false }
+          TestSuccess = false
+          FileWriterInfo = None }
 
-    let resultPath testName = testPath + (sprintf "TestResults_%s.xml" testName)
-    let writeResults testName =
-        TestResults.writeNUnitSummary (resultPath testName, "Expecto.Tests")
-    let getConfig testName =
-        defaultConfig.appendSummaryHandler (writeResults testName)
+    let resultPath fileWriterInfo testName = testPath fileWriterInfo + (sprintf "TestResults_%s.xml" testName)
+    let writeResults fileWriterInfo testName =
+        TestResults.writeNUnitSummary (resultPath fileWriterInfo testName, "Expecto.Tests")
+    let getConfig fileWriterInfo testName =
+        defaultConfig.appendSummaryHandler (writeResults fileWriterInfo testName)
 
 [<AutoOpen>]
 module Report =
@@ -64,48 +69,79 @@ module Report =
         member __.Delay(f) =
             f()
 
+        [<CustomOperation("initFileWriterInfo")>]
+        member __.FileWriterInfo(reportData, fileWriterInfo) =
+            logOk fileWriterInfo "InitFileWriter"
+            let reportDataWithFileWriterInfo = { reportData with FileWriterInfo = Some fileWriterInfo }
+            reportDataWithFileWriterInfo
         [<CustomOperation("worksheetList")>]
         member __.WorkSheet(reportData, workSheetsAndName) =
-            logOk Local "Starting workSheet insert"
-            for workSheet, name in workSheetsAndName do
-                logOk Local (sprintf "doing report %s" name)
-                let wksData =
-                    { reportData with Name = name
-                                      WorkSheet = workSheet }
-                createSheetWithLogAndTrack wksData |> ignore
-            reportData
+            match reportData.FileWriterInfo with
+            | Some fileWriterInfo ->
+                logOk fileWriterInfo "Starting workSheet insert"
+                for workSheet, name in workSheetsAndName do
+                    logOk fileWriterInfo (sprintf "doing report %s" name)
+                    let wksData =
+                        { reportData with Name = name
+                                          WorkSheet = workSheet }
+                    createSheetWithLogAndTrack wksData |> ignore
+                reportData
+            | None ->
+                printfn "Can't start Juniper - please init FileWriter info first"
+                failwithf "Can't start Juniper - please init FileWriter info first"
+
 
         [<CustomOperation("exportReport")>]
         member __.Run(reportData : ReportData) =
-            logOk Local "Starting ExportReport"
-            exportReport reportData.SheetInsert
+            match reportData.FileWriterInfo with
+            | Some fileWriterInfo ->
+                logOk fileWriterInfo "Starting ExportReport"
+                exportReport reportData.SheetInsert
+            | None ->
+                printfn "Can't start Juniper - please init FileWriter info first"
+                failwithf "Can't start Juniper - please init FileWriter info first"
 
         [<CustomOperation("sheetInsert")>]
         member __.SheetInsert(reportData, sheetInsert) =
-            logOk Local
-                (sprintf "doing SheetInsert reportData %A sheetInsert %A"
-                     reportData sheetInsert)
-            { reportData with SheetInsert = Some sheetInsert }
+            match reportData.FileWriterInfo with
+            | Some fileWriterInfo ->
+                logOk fileWriterInfo
+                    (sprintf "doing SheetInsert reportData %A sheetInsert %A"
+                         reportData sheetInsert)
+                { reportData with SheetInsert = Some sheetInsert }
+            | None ->
+                printfn "Can't start Juniper - please init FileWriter info first"
+                failwithf "Can't start Juniper - please init FileWriter info first"
 
         [<CustomOperation("testReportData")>]
         member __.TestReportData(reportData, (expectoTest : ReportData -> Test)) =
-            logOk Local "TestReportData"
-            let test =
-                { Test = expectoTest reportData
-                  Name = "Juniper Test" }
-            logOk Local "Starting ReportData Tests"
-            let config = getConfig test.Name
-            let result = test.Test |> runTests config
-            { reportData with TestSuccess =
-                                  match result with
-                                  | 0 -> true
-                                  | 1 -> false
-                                  | _ -> failwith "no valid Test result" }
+            match reportData.FileWriterInfo with
+            | Some fileWriterInfo ->
+                logOk fileWriterInfo "TestReportData"
+                let test =
+                    { Test = expectoTest reportData
+                      Name = "Juniper Test" }
+                logOk fileWriterInfo "Starting ReportData Tests"
+                let config = getConfig fileWriterInfo test.Name
+                let result = test.Test |> runTests config
+                { reportData with TestSuccess =
+                                      match result with
+                                      | 0 -> true
+                                      | 1 -> false
+                                      | _ -> failwith "no valid Test result" }
+            | None ->
+                printfn "Can't start Juniper - please init FileWriter info first"
+                failwithf "Can't start Juniper - please init FileWriter info first"
 
         [<CustomOperation("logSuccess")>]
         member __.Log(reportData, msg) =
-            logOk Local msg
-            { reportData with ReportData.LogMsg = msg }
+            match reportData.FileWriterInfo with
+            | Some fileWriterInfo ->
+                logOk fileWriterInfo msg
+                { reportData with ReportData.LogMsg = msg }
+            | None ->
+                printfn "Can't start Juniper - please init FileWriter info first"
+                failwithf "Can't start Juniper - please init FileWriter info first"
 
     let report =
         Juniper()

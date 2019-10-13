@@ -6,11 +6,11 @@ open SpecificDomain.HeatPrognose
 open Juniper
 open Chia.Domain.Ids
 open Chia.Domain.Time
-open Chia.Domain.Logging
-open FileWriter
-open Ids
+open Chia.FileWriter
 open Expecto
 open Thoth.Json.Net
+open SpecificDomain.Config
+
 let reportInfo = 
     { ReportName = "Test"
       ReportTime = "Test"
@@ -34,43 +34,43 @@ let locationValues =
           Time = DateTime.Now.AddYears(-1) }  |]
 
 let sheetData =
-    logOk Local "SheetData"
+    logOk fileWriterInfo "SheetData"
     { Locations = testLocation
       Measures = locationValues }      
 let testSheetInsert = 
-    logOk Local "SheetInsert"
-    let excelPackage = startExcelApp ()
+    logOk fileWriterInfo "SheetInsert"
+    let excelPackage = startExcelApp fileWriterInfo ()
     let sheetInsert =
         { ExportedReport = reportInfo
           SheetData = 
-            logOk Local "ReportData"
+            logOk fileWriterInfo "ReportData"
             Some (
                 try 
                     DomainSheetData.Encoder sheetData |> Encode.toString 0 
                 with 
                 | exn -> 
-                    logError exn Local "Couldn't cast to obj"
+                    logError exn fileWriterInfo "Couldn't cast to obj"
                     failwithf "Couldn't cast to obj")
 
           ExcelPackage = excelPackage }
-    logOk Local (sprintf "SheetInsert %A" sheetInsert)
+    logOk fileWriterInfo (sprintf "SheetInsert %A" sheetInsert)
     sheetInsert
 let testWorkSheets = 
     try
-        logOk Local "Test Worksheet"
+        logOk fileWriterInfo "Test Worksheet"
         [ ReportSheet.testSheet, "TestWorksheet" ]
     with    
     | exn -> 
-        logError exn Local "Couldn't add testWorksheet"
+        logError exn fileWriterInfo "Couldn't add testWorksheet"
         failwithf "Couldn't add testWorksheet"        
 
 let expectoTests (reportData:ReportData) =
-    logOk Local "ExpectoTests"
+    logOk fileWriterInfo "ExpectoTests"
     let sheetInsert = 
         match reportData.SheetInsert with
         | Some sheetInsert -> sheetInsert
         | None -> 
-            logOk Local "No test possible"
+            logOk fileWriterInfo "No test possible"
             failwith "no test possible"
     let sumMeasures = 
         match sheetInsert.SheetData with
@@ -82,7 +82,7 @@ let expectoTests (reportData:ReportData) =
                     | Error exn -> failwithf "decoding failed %A" exn
                 with 
                 | exn -> 
-                    logError exn Local "Couldn't downcast to DomainShetData"
+                    logError exn fileWriterInfo "Couldn't downcast to DomainShetData"
                     failwithf "Couldn't downcast to DomainShetData"          
             domainSheetData.Measures |> Array.sumBy (fun x -> x.Value)
         | None -> 0.

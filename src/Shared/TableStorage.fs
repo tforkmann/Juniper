@@ -2,9 +2,9 @@ module TableStorage
 
 open Microsoft.WindowsAzure.Storage.Table
 open FSharp.Control.Tasks.ContextInsensitive
-open Chia.Domain.Logging
-open FileWriter
-open CreateTable
+open SpecificDomain.Config
+open Chia.FileWriter
+open Chia.CreateTable
 open SpecificDomain.HeatPrognose
 //MasterData
 let weatherDataEntity (message:WeatherData) = 
@@ -34,7 +34,7 @@ let saveWeatherBatch (table:CloudTable) (messages:WeatherData [] ) = task {
     with
         | exn ->    
             let msg = sprintf  "Couldn't Add Entity Message: %s" exn.Message   
-            logError exn Local msg
+            logError exn fileWriterInfo msg
             failwith msg
 
     ()

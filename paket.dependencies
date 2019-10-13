@@ -17,7 +17,7 @@ group Juniper
     nuget System.Configuration.ConfigurationManager
     nuget Thoth.Json.Net
     nuget Chia 
-    nuget System.Drawing.Common 4.6.0-rc1.19456.4
+    nuget System.Drawing.Common
 
 group AzureFunctions
     
@@ -47,4 +47,4 @@ group AzureFunctions
     nuget System.Configuration.ConfigurationManager
     nuget Thoth.Json.Net
     nuget Chia
-    nuget System.Drawing.Common 4.6.0-rc1.19456.4
+    nuget System.Drawing.Common

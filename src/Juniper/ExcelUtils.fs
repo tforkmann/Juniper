@@ -3,7 +3,7 @@ open System
 open Juniper
 open OfficeOpenXml
 open System.IO
-open CreateBlob
+open Microsoft.WindowsAzure.Storage.Blob
 open FSharp.Control.Tasks.ContextInsensitive
 
 [<AutoOpen>]
@@ -11,10 +11,10 @@ module ExcelUtils =
     let getNiceDateString (time : DateTime) = time.ToString("dd.MM.yyyy HH:mm")
 
     ///Function to save ExcelWorrkbook to FileStream
-    let saveExcelWbToBlob guid (wb : ExcelPackage) =
+    let saveExcelWbToBlob guid (container : CloudBlobContainer) (wb : ExcelPackage) =
         task {
             let blobId = guid + ".xlsx"
-            let blobBlock = testReportContainer.GetBlockBlobReference(blobId)
+            let blobBlock = container.GetBlockBlobReference(blobId)
             blobBlock.Properties.ContentType <- "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
             let data = wb.GetAsByteArray()
             use stream = new MemoryStream(data)

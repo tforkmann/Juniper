@@ -3,7 +3,7 @@ module TableMappers
 open Microsoft.WindowsAzure.Storage.Table
 open SpecificDomain.DomainIds
 open SpecificDomain.HeatPrognose
-open CreateTable
+open Chia.CreateTable
 
 let mapLocation (entity : DynamicTableEntity) : Location =
     { LocationId = LocationId (entity.PartitionKey |> int)

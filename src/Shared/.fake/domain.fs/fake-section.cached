@@ -3,7 +3,9 @@ open OfficeOpenXml
 open System
 open Expecto
 open System.Threading.Tasks
-open Chia
+open Chia.Domain.Time
+open Chia.Domain.Ids
+
 
 /// Add your Domain types
 
@@ -24,7 +26,7 @@ module Domain =
           ReportTime : string
           ReportIntervall : ReportIntervall
           ReportTyp : string
-          ReportId : Ids.ReportId
+          ReportId : ReportId
           ReportDir : string }
          
     type SheetInsert =
@@ -44,11 +46,6 @@ module Domain =
     type TestInfo =
         { Test : Test
           Name : string }
-
-module Logging = 
-  type DevOption =
-    | Local
-    | Azure
 
 module SortableRowKey =
     let toRowKey (dateTime : DateTime) =

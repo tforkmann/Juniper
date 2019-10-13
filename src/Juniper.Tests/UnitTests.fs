@@ -3,11 +3,12 @@ module UnitTests
 open Expecto
 open Juniper
 open JuniperTests
-
+open SpecificDomain.Config
 
 let testReport = 
     report {
-        sheetInsert testSheetInsert
+        initFileWriterInfo fileWriterInfo
+        sheetInsert testSheetInsert 
         testReportData expectoTests
         worksheetList testWorkSheets
         logSuccess "Finished QuarterlyReportExternal"

@@ -1,15 +1,15 @@
 module ReportSheet
 
 open Juniper
-open ExcelUtils
-open Chia.Domain.Logging
-open FileWriter
 open FSharp.Control.Tasks.ContextInsensitive
 open SpecificDomain.HeatPrognose
 open OfficeOpenXml
 open Thoth.Json.Net
-open Chia.TimeCalculation
-logOk Local "Open ReportSheets"
+open Chia.TimeCalculation.Utils
+open SpecificDomain.Config
+open Chia.FileWriter
+
+logOk fileWriterInfo "Open ReportSheets"
 ///ReportHeader
 let reportHeader (reportName : string) (measures : Measure []) (wks : ExcelWorksheet) =
     let timeFrom =
@@ -36,7 +36,7 @@ let reportHeader (reportName : string) (measures : Measure []) (wks : ExcelWorks
     wks.Cells.[4, 2].Value <- timeTo
 ///GET WORKSHEET
 let testSheet (sheet : SheetInsert option) =
-    logOk Local "Starting TestSheet"
+    logOk fileWriterInfo "Starting TestSheet"
     task {
         match sheet with
         | Some sheetInsert ->
@@ -68,8 +68,8 @@ let testSheet (sheet : SheetInsert option) =
                        testSheet.Cells.[startRow + i, 1].Value <- x.Time |> getNiceDateString
                        testSheet.Cells.[startRow + i, 2].Value <- x.Value
                        testSheet.Cells.[startRow + i, 3].Value <- x.UnitOfMeasure)
-            logOk Local (sprintf "Generated %s %s" reportName (matchReportIntervall exportedReport.ReportIntervall))    
+            logOk fileWriterInfo (sprintf "Generated %s %s" reportName (matchReportIntervall exportedReport.ReportIntervall))    
         | None -> 
-            logOk Local "no SheetData"
+            logOk fileWriterInfo "no SheetData"
             failwith "no SheetData"
     }
