@@ -1346,7 +1346,7 @@ NUGET
       System.Xml.XmlSerializer (>= 4.3) - restriction: >= netstandard2.0
       System.Xml.XPath.XmlDocument (>= 4.3) - restriction: >= netstandard2.0
     BenchmarkDotNet.Annotations (0.11.5) - restriction: || (&& (>= net461) (>= netstandard2.0)) (>= netcoreapp2.0)
-    Chia (0.1.80)
+    Chia (0.1.81)
       Epplus (>= 4.5.3.2) - restriction: >= netcoreapp3.0
       Expecto (>= 8.12) - restriction: >= netcoreapp3.0
       Expecto.BenchmarkDotNet (>= 8.12) - restriction: >= netcoreapp3.0
@@ -1388,8 +1388,8 @@ NUGET
     Expecto.TestResults (8.12)
       Expecto (>= 8.12) - restriction: || (>= net461) (>= netstandard2.0)
       FSharp.Core (>= 4.3.4) - restriction: || (>= net461) (>= netstandard2.0)
-    Fable.Core (3.1.1) - restriction: && (< net46) (>= netstandard2.0)
-      FSharp.Core (>= 4.5.2) - restriction: >= netstandard2.0
+    Fable.Core (3.1.2) - restriction: && (< net46) (>= netstandard2.0)
+      FSharp.Core (>= 4.7) - restriction: >= netstandard2.0
     FsCheck (2.14) - restriction: || (>= net461) (>= netstandard2.0)
       FSharp.Core (>= 4.2.3) - restriction: || (>= net452) (>= netstandard1.6)
     FSharp.Compiler.Tools (10.2.3)

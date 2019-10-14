@@ -13,14 +13,12 @@ open Chia.FileWriter
 
 [<AutoOpen>]
 module Domain =
-    printfn "opening Domain"
 
     module Ids =
 
         type SortableRowKey =
             | SortableRowKey of string
             member this.GetValue = (fun (SortableRowKey id) -> id) this
-
 
     type XLSReport =
         { ReportName : string
