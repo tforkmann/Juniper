@@ -31,13 +31,13 @@ module ExcelUtils =
             | Some sheetInsert ->
                 try
                     let exportDir = sheetInsert.ExportedReport.ReportDir
-                    if not(Directory.Exists(exportDir)) then 
+                    if not(Directory.Exists(exportDir)) then
                         Directory.CreateDirectory(exportDir) |> ignore
                     let dateTime = DateTime.Now.ToString("yyyyMMdd_HHmm")
                     let reportPath = Path.Combine(exportDir + "/" + sheetInsert.ExportedReport.ReportName + "_" + dateTime + ".xlsx")
                     let data = sheetInsert.ExcelPackage.GetAsByteArray()
                     File.WriteAllBytes(reportPath, data)
-                    printfn "Saving Excel report at %A" reportPath
+                    printfn "Saving Excel report at %s" reportPath
                     sheetInsert.ExcelPackage.Dispose()
                 with exn ->
                     printfn "failure with export %s"  exn.Message

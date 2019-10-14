@@ -104,10 +104,7 @@ module Report =
         [<CustomOperation("sheetInsert")>]
         member __.SheetInsert(reportData, sheetInsert) =
             match reportData.FileWriterInfo with
-            | Some fileWriterInfo ->
-                logOk fileWriterInfo
-                    (sprintf "doing SheetInsert reportData %A sheetInsert %A"
-                         reportData sheetInsert)
+            | Some _ ->
                 { reportData with SheetInsert = Some sheetInsert }
             | None ->
                 printfn "Can't start Juniper - please init FileWriter info first"

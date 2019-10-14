@@ -12,9 +12,9 @@ open Chia.FileWriter
 
 
 [<AutoOpen>]
-module Domain = 
+module Domain =
     printfn "opening Domain"
-    
+
     module Ids =
 
         type SortableRowKey =
@@ -29,7 +29,7 @@ module Domain =
           ReportTyp : string
           ReportId : ReportId
           ReportDir : string }
-         
+
     type SheetInsert =
         { ExportedReport : XLSReport
           ExcelPackage : ExcelPackage
@@ -52,7 +52,7 @@ module Domain =
 module SortableRowKey =
     let toRowKey (dateTime : DateTime) =
         String.Format("{0:D19}", DateTime.MaxValue.Ticks - dateTime.Ticks) |> Ids.SortableRowKey
-    let toDate (Ids.SortableRowKey ticks) = DateTime(DateTime.MaxValue.Ticks - int64 ticks)    
+    let toDate (Ids.SortableRowKey ticks) = DateTime(DateTime.MaxValue.Ticks - int64 ticks)
 
 
 
